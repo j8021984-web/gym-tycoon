@@ -1,5 +1,5 @@
-const KEY='gym_tycoon_v12';
-const PREVKEY='gym_tycoon_v11';
+const KEY='gym_tycoon_v13';
+const PREVKEY='gym_tycoon_v12';
 const OLDKEY='gym_tycoon_v1';
 const machines=[
  ['treadmill','跑步機','🏃',1200,3,'cardio'],['bench','臥推架','🏋️',1800,5,'strength'],['squat','深蹲架','🦵',2400,7,'strength'],['bike','飛輪車','🚴',3200,9,'cardio'],['cable','滑輪機','💪',4500,12,'strength'],['sauna','三溫暖','🧖',8000,20,'cardio']
@@ -55,6 +55,32 @@ function resetLayout(){
 }
 function setFee(v){g.fee=+v;save()}
 function machineSlots(){let out=[];let cardio=[[39,17],[52,17],[65,17],[78,17],[39,31],[52,31],[65,31],[78,31]];let strength=[[39,59],[52,59],[65,59],[78,59],[39,75],[52,75],[65,75],[78,75]];let ci=0,si=0;machines.forEach(m=>{for(let i=0;i<(g.machines[m[0]]||0);i++){let arr=m[5]==='cardio'?cardio:strength;let idx=m[5]==='cardio'?ci++:si++;let p=arr[idx%arr.length];out.push({id:m[0],name:m[1],icon:m[2],x:p[0]+Math.floor(idx/arr.length)*4,y:p[1]})}});return out}
+let gameSpeed=1,simTick=0,simTodayIncome=0,brokenKeys=new Set();
+function setGameSpeed(v){gameSpeed=v;toastMsg(v?`遊戲速度 ${v}×`:'遊戲暫停')}
+function phaseNow(){let h=(simTick%24);return h<7?'🌙 清晨':h<12?'🌅 早晨':h<17?'☀️ 下午':h<22?'🌆 晚間尖峰':'🌙 夜間'}
+function popCash(scene,x,y,amt){let p=document.createElement('div');p.className='cashPop';p.style.left=x;p.style.top=y;p.textContent=`+$${amt}`;scene.appendChild(p);setTimeout(()=>p.remove(),1000)}
+function simulatorStep(){
+ if(!gameSpeed||layoutEdit)return;simTick+=gameSpeed;
+ let scene=$('gymScene');if(!scene)return;
+ let npcs=[...scene.querySelectorAll('.pixelNpc')],equips=[...scene.querySelectorAll('.equip')];
+ let peak=(simTick%24>=17&&simTick%24<22)?2:1;
+ npcs.forEach((n,i)=>{
+  let e=equips.length?equips[(i+simTick)%equips.length]:null;
+  if(e&&!brokenKeys.has(e.dataset.key)){
+   let x=parseFloat(e.style.left),y=parseFloat(e.style.top);
+   n.style.left=Math.max(8,Math.min(88,x+(i%2?5:-4)))+'%';n.style.top=Math.max(12,Math.min(82,y+5))+'%';
+   n.innerHTML=`${i%2?'🧑':'👩'}<small>會員</small><i class="npcBubble">${i%4===0?'💪':i%4===1?'❤️':i%4===2?'⌛':'💬'}</i>`;
+   if(Math.random()<.08*peak){let amt=80+Math.floor(Math.random()*121);simTodayIncome+=amt;g.money+=amt;popCash(scene,n.style.left,n.style.top,amt)}
+  }
+ });
+ if(equips.length&&Math.random()<.018*gameSpeed){let e=equips[Math.floor(Math.random()*equips.length)];brokenKeys.add(e.dataset.key);e.classList.add('brokenEquip')}
+ if(roleCount('repair')&&brokenKeys.size&&Math.random()<.12*gameSpeed){let k=[...brokenKeys][0];brokenKeys.delete(k);let e=scene.querySelector(`[data-key="${k}"]`);if(e)e.classList.remove('brokenEquip')}
+ let q=Math.max(0,npcs.length-equips.filter(e=>!brokenKeys.has(e.dataset.key)).length);
+ if($('simPeople'))$('simPeople').textContent=npcs.length;if($('simQueue'))$('simQueue').textContent=q;if($('simBroken'))$('simBroken').textContent=brokenKeys.size;if($('simIncome'))$('simIncome').textContent=fmt(simTodayIncome);if($('dayPhase'))$('dayPhase').textContent=phaseNow();
+ if(simTick%24===0)simTodayIncome=0;
+ save();
+}
+setInterval(simulatorStep,1300);
 function renderScene(){
  let scene=$('gymScene');if(!scene)return;
  scene.classList.toggle('layoutEditing',layoutEdit);
@@ -69,10 +95,12 @@ function renderScene(){
    if(!layoutEdit||d.dataset.dragging!=='1')return;e.preventDefault();
    let r=scene.getBoundingClientRect(),rawX=(e.clientX-r.left)/r.width*100,rawY=(e.clientY-r.top)/r.height*100;
    let x=Math.max(5,Math.min(90,Math.round(rawX/snap)*snap)),y=Math.max(10,Math.min(85,Math.round(rawY/snap)*snap));
-   d.style.left=x+'%';d.style.top=y+'%';g.layout[key]={x,y};
+   let conflict=[...scene.querySelectorAll('.equip')].some(o=>o!==d&&Math.abs(parseFloat(o.style.left)-x)<6&&Math.abs(parseFloat(o.style.top)-y)<8);
+d.classList.toggle('placeBAD',conflict);d.classList.toggle('placeOK',!conflict);
+if(!conflict){d.style.left=x+'%';d.style.top=y+'%';g.layout[key]={x,y};}
    let c=$('gridCoord');if(c)c.textContent=`格子 X:${Math.round(x/snap)} Y:${Math.round(y/snap)}`;
   });
-  const finish=e=>{if(d.dataset.dragging!=='1')return;d.dataset.dragging='0';d.classList.remove('dragActive');try{d.releasePointerCapture?.(e.pointerId)}catch(_){}localStorage.setItem(KEY,JSON.stringify(g));toastMsg('✓ 已吸附格線並儲存')};
+  const finish=e=>{if(d.dataset.dragging!=='1')return;if(d.classList.contains('placeBAD')){toastMsg('❌ 此位置已有器材');d.classList.remove('placeBAD');return;}d.dataset.dragging='0';d.classList.remove('dragActive','placeOK');try{d.releasePointerCapture?.(e.pointerId)}catch(_){}localStorage.setItem(KEY,JSON.stringify(g));toastMsg('✓ 已吸附格線並儲存')};
   d.addEventListener('pointerup',finish);d.addEventListener('pointercancel',finish);scene.appendChild(d);
  });
  let spots={shower:[6,18],vending:[7,36],lounge:[7,54],ptzone:[7,70]};
@@ -182,7 +210,7 @@ render();
 if('serviceWorker' in navigator){
  window.addEventListener('load',async()=>{
   try{
-   const reg=await navigator.serviceWorker.register('./sw.js?v=120',{updateViaCache:'none'});
+   const reg=await navigator.serviceWorker.register('./sw.js?v=130',{updateViaCache:'none'});
    await reg.update();
    let refreshing=false;
    navigator.serviceWorker.addEventListener('controllerchange',()=>{

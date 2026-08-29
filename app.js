@@ -27,7 +27,7 @@ const quests=[
 ];
 function fresh(){return{money:5000,members:8,rating:3.5,prestige:0,day:1,hour:8,todayIncome:0,totalRevenue:0,served:0,bestDay:0,level:1,fee:800,machines:{treadmill:1},staff:{},claimed:{},machineLv:{},classes:{},branches:1,layout:{},vipMembers:[],coachXP:0,facilities:{},leagueWeek:1,rivalWins:0,lastLeagueDay:0,lastRank:4,employees:[],staffCap:5,staffCapLv:0,events:['🎉 健身房正式開幕！會員已經在門口排隊了。']}}
 function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(v)return {...fresh(),...v};let prev=JSON.parse(localStorage.getItem(PREVKEY));if(prev)return {...fresh(),...prev,machineLv:prev.machineLv||{},classes:prev.classes||{},branches:prev.branches||1,layout:prev.layout||{},vipMembers:prev.vipMembers||[],coachXP:prev.coachXP||0,facilities:prev.facilities||{},leagueWeek:prev.leagueWeek||1,rivalWins:prev.rivalWins||0,lastLeagueDay:prev.lastLeagueDay||0,lastRank:prev.lastRank||4,employees:prev.employees||[],staffCap:prev.staffCap||5,staffCapLv:prev.staffCapLv||0};let old=JSON.parse(localStorage.getItem(OLDKEY));if(old)return {...fresh(),...old,totalRevenue:old.totalRevenue||0,served:0,bestDay:0,fee:800,prestige:0,claimed:{}}}catch(e){}return fresh()}
-let g=load(),animating=false;
+let g=load(),animating=false,layoutEdit=false;
 const $=id=>document.getElementById(id); const fmt=n=>'$'+Math.floor(n).toLocaleString();
 function totalMachines(){return Object.values(g.machines).reduce((a,b)=>a+b,0)}
 function capacity(){return 10+totalMachines()*4+(g.level-1)*20+(g.facilities?.lounge?10:0)}
@@ -38,9 +38,75 @@ function save(){localStorage.setItem(KEY,JSON.stringify(g));render()}
 function push(s){g.events.unshift(s);g.events=g.events.slice(0,7)}
 function toastMsg(s){let t=$('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400)}
 function tab(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');render()}
+function toggleLayoutMode(){
+ layoutEdit=!layoutEdit;
+ let scene=$('gymScene'),btn=$('layoutModeBtn');
+ if(scene)scene.classList.toggle('layoutEditing',layoutEdit);
+ if(btn){btn.classList.toggle('active',layoutEdit);btn.textContent=layoutEdit?'✅ 器材配置：開啟':'🛠️ 器材配置：關閉'}
+ let hint=$('layoutHint');if(hint)hint.textContent=layoutEdit?'拖曳器材到想要的位置，放開後會自動儲存。':'開啟「器材配置」後，可直接拖曳場內器材。';
+ renderScene();
+}
+function resetLayout(){
+ g.layout={};
+ localStorage.setItem(KEY,JSON.stringify(g));
+ renderScene();
+ toastMsg('器材位置已重設');
+}
 function setFee(v){g.fee=+v;save()}
 function machineSlots(){let out=[];let cardio=[[39,17],[52,17],[65,17],[78,17],[39,31],[52,31],[65,31],[78,31]];let strength=[[39,59],[52,59],[65,59],[78,59],[39,75],[52,75],[65,75],[78,75]];let ci=0,si=0;machines.forEach(m=>{for(let i=0;i<(g.machines[m[0]]||0);i++){let arr=m[5]==='cardio'?cardio:strength;let idx=m[5]==='cardio'?ci++:si++;let p=arr[idx%arr.length];out.push({id:m[0],name:m[1],icon:m[2],x:p[0]+Math.floor(idx/arr.length)*4,y:p[1]})}});return out}
-function renderScene(){let scene=$('gymScene');scene.querySelectorAll('.equip,.memberDot,.facilitySpot').forEach(n=>n.remove());machineSlots().forEach((m,i)=>{let key=m.id+'_'+i,pos=(g.layout||{})[key],d=document.createElement('div');d.className='equip';d.style.left=(pos?.x??m.x)+'%';d.style.top=(pos?.y??m.y)+'%';d.innerHTML=`${m.icon}<small>${m.name}</small>`;let drag=false;const mv=e=>{if(!drag)return;e.preventDefault();let r=scene.getBoundingClientRect(),p=e.touches?e.touches[0]:e,x=Math.max(1,Math.min(90,(p.clientX-r.left)/r.width*100)),y=Math.max(5,Math.min(84,(p.clientY-r.top)/r.height*100));d.style.left=x+'%';d.style.top=y+'%';g.layout[key]={x,y}};const up=()=>{if(!drag)return;drag=false;document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);document.removeEventListener('touchmove',mv);document.removeEventListener('touchend',up);localStorage.setItem(KEY,JSON.stringify(g));toastMsg('器材位置已儲存')};d.addEventListener('mousedown',e=>{e.preventDefault();drag=true;document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)});d.addEventListener('touchstart',()=>{drag=true;document.addEventListener('touchmove',mv,{passive:false});document.addEventListener('touchend',up)},{passive:true});scene.appendChild(d)});let spots={shower:[6,18],vending:[7,36],lounge:[7,54],ptzone:[7,70]};facilities.forEach(f=>{if(!g.facilities?.[f[0]])return;let s=document.createElement('div');s.className='facilitySpot';s.style.left=spots[f[0]][0]+'%';s.style.top=spots[f[0]][1]+'%';s.innerHTML=`${f[2]}<small>${f[1]}</small>`;scene.appendChild(s)})}
+function renderScene(){
+ let scene=$('gymScene');if(!scene)return;
+ scene.classList.toggle('layoutEditing',layoutEdit);
+ scene.querySelectorAll('.equip,.memberDot,.facilitySpot').forEach(n=>n.remove());
+ machineSlots().forEach((m,i)=>{
+  let key=m.id+'_'+i,pos=(g.layout||{})[key],d=document.createElement('div');
+  d.className='equip';
+  d.style.left=(pos?.x??m.x)+'%';
+  d.style.top=(pos?.y??m.y)+'%';
+  d.innerHTML=`${m.icon}<small>${m.name}</small>`;
+  d.dataset.key=key;
+
+  d.addEventListener('pointerdown',e=>{
+   if(!layoutEdit)return;
+   e.preventDefault();
+   d.setPointerCapture?.(e.pointerId);
+   d.dataset.dragging='1';
+  });
+
+  d.addEventListener('pointermove',e=>{
+   if(!layoutEdit||d.dataset.dragging!=='1')return;
+   e.preventDefault();
+   let r=scene.getBoundingClientRect();
+   let x=Math.max(1,Math.min(90,(e.clientX-r.left)/r.width*100));
+   let y=Math.max(5,Math.min(84,(e.clientY-r.top)/r.height*100));
+   d.style.left=x+'%';
+   d.style.top=y+'%';
+   g.layout[key]={x,y};
+  });
+
+  const finish=e=>{
+   if(d.dataset.dragging!=='1')return;
+   d.dataset.dragging='0';
+   try{d.releasePointerCapture?.(e.pointerId)}catch(_){}
+   localStorage.setItem(KEY,JSON.stringify(g));
+   toastMsg('器材位置已儲存');
+  };
+  d.addEventListener('pointerup',finish);
+  d.addEventListener('pointercancel',finish);
+  scene.appendChild(d);
+ });
+
+ let spots={shower:[6,18],vending:[7,36],lounge:[7,54],ptzone:[7,70]};
+ facilities.forEach(f=>{
+  if(!g.facilities?.[f[0]])return;
+  let s=document.createElement('div');
+  s.className='facilitySpot';
+  s.style.left=spots[f[0]][0]+'%';
+  s.style.top=spots[f[0]][1]+'%';
+  s.innerHTML=`${f[2]}<small>${f[1]}</small>`;
+  scene.appendChild(s);
+ });
+}
 function animateHour(visitors,servedCount,queueCount,earned){animating=true;$('operateBtn').disabled=true;renderScene();let scene=$('gymScene'),slots=machineSlots();let people=Math.min(visitors,8);$('visitors').textContent=people;$('queue').textContent=queueCount;for(let i=0;i<people;i++){let p=document.createElement('div');p.className='memberDot';p.textContent=['🙂','😎','🤓','😁','🧢','👩','🧔','👱'][i%8];p.style.left='6%';p.style.top=(70+i%4*6)+'%';scene.appendChild(p);setTimeout(()=>{let slot=slots[i%Math.max(1,slots.length)]||{x:48,y:48};p.style.left=(slot.x+2)+'%';p.style.top=(slot.y+4)+'%';p.classList.add('busy');if(i>=servedCount){let b=document.createElement('span');b.className='bubble';b.textContent='排隊中…';p.appendChild(b)}},150+i*80);setTimeout(()=>{p.style.left='9%';p.style.top='82%';p.classList.remove('busy')},1050+i*55);setTimeout(()=>p.remove(),1750+i*55)}setTimeout(()=>{animating=false;$('operateBtn').disabled=false;$('visitors').textContent='0';$('queue').textContent='0';toastMsg(`本小時營收 +${fmt(earned)}`)},1950)}
 function nextHour(){if(animating)return;let visitors=Math.min(demand(),capacity()),machineCap=Math.max(1,totalMachines()*2),servedCount=Math.min(visitors,machineCap),queueCount=Math.max(0,visitors-machineCap);let earn=Math.round(servedCount*revenuePerVisitor()*(queueCount>0?.94:1));g.money+=earn;g.todayIncome+=earn;g.totalRevenue+=earn;g.served+=servedCount;g.hour++;g.employees.forEach(e=>{if(e.shift==='休假'){e.fatigue=Math.max(0,e.fatigue-18);e.mood=Math.min(100,e.mood+6);return}e.xp+=Math.max(1,Math.round(servedCount/8));e.fatigue=Math.min(100,e.fatigue+4);if(e.fatigue>75)e.mood=Math.max(0,e.mood-3);else e.mood=Math.min(100,e.mood+1);if(e.xp>=100){e.xp-=100;e.lv++;e.skill=Math.min(100,e.skill+3);e.service=Math.min(100,e.service+2);e.salary=Math.round(e.salary*1.08);push(`⭐ ${e.name} 升到 Lv.${e.lv}`)}});if(g.staff.coach)g.coachXP+=Math.round(servedCount*(g.facilities?.ptzone?1.35:1));if(Math.random()<.10&&g.vipMembers.length<12){let names=['阿哲','小美','Ken','Yuki','阿凱','Mina','Leo','小安','Rina','大雄'],goals=['增肌','減脂','體能','塑形'],n=names[Math.floor(Math.random()*names.length)];if(!g.vipMembers.some(v=>v.name===n)){let jobs=['上班族','學生','護理師','工程師','設計師','業務','老師','自由工作者'];g.vipMembers.push({name:n,goal:goals[Math.floor(Math.random()*goals.length)],job:jobs[Math.floor(Math.random()*jobs.length)],lv:1,progress:0});push(`🌟 ${n} 成為常客會員！`)}}g.vipMembers.forEach(v=>{v.progress+=Math.max(2,Math.round(servedCount/2));if(v.progress>=100){v.progress-=100;v.lv++;g.prestige+=2;push(`💪 ${v.name} 升到 Lv.${v.lv}`)}});
  if(g.facilities?.shower&&Math.random()<.22)g.rating=Math.min(5,g.rating+.015);if(queueCount>=4){g.rating=Math.max(1,g.rating-(g.staff.coach?.015:.035));push(`😓 尖峰時段有 ${queueCount} 人排隊，評價受到影響。`)}else if(Math.random()<.28){g.rating=Math.min(5,g.rating+(g.staff.clean?.05:.02));push('⭐ 會員對今天的訓練體驗很滿意！')}
@@ -48,7 +114,7 @@ function nextHour(){if(animating)return;let visitors=Math.min(demand(),capacity(
  if(Math.random()<.10){let d=Math.floor(120+Math.random()*260);g.money=Math.max(0,g.money-d);push(`🔧 器材臨時維護支出 ${fmt(d)}`)}
  if(g.hour>=22){g.bestDay=Math.max(g.bestDay,g.todayIncome);let bonus=Math.round(g.todayIncome*.05);g.money+=bonus;g.prestige+=Math.max(1,Math.round(g.rating));push(`🌙 第 ${g.day} 天結束：營收 ${fmt(g.todayIncome)}，營運獎勵 ${fmt(bonus)}`);g.day++;if(g.day>1&&g.day%7===1)runLeague();g.hour=8;g.todayIncome=0}
  save();animateHour(visitors,servedCount,queueCount,earn)}
-function buyMachine(id){let m=machines.find(x=>x[0]===id),count=g.machines[id]||0,cost=Math.round(m[3]*(1+count*.35));if(g.money<cost)return toastMsg('資金不足');g.money-=cost;g.machines[id]=count+1;g.rating=Math.min(5,g.rating+.04);push(`🏋️ 新增 ${m[1]}，場館容量提升。`);save();toastMsg(`${m[1]} 已進場`) }
+function buyMachine(id){let m=machines.find(x=>x[0]===id),count=g.machines[id]||0,cost=Math.round(m[3]*(1+count*.35));if(g.money<cost)return toastMsg('資金不足');g.money-=cost;g.machines[id]=count+1;g.rating=Math.min(5,g.rating+.04);push(`🏋️ 新增 ${m[1]}，場館容量提升。`);save();renderScene();toastMsg(`${m[1]} 已進場，可到場館配置位置`) }
 function hire(id){let s=staffs.find(x=>x[0]===id);if(g.staff[id])return;if(g.money<s[3])return toastMsg('資金不足');g.money-=s[3];g.staff[id]=1;push(`🤝 ${s[1]} 加入團隊`);save()}
 function upgradeMachine(id){let m=machines.find(x=>x[0]===id),lv=(g.machineLv[id]||0),cost=Math.round(m[3]*(lv+1)*1.25);if(!(g.machines[id]>0))return toastMsg('請先購買器材');if(g.money<cost)return toastMsg('資金不足');g.money-=cost;g.machineLv[id]=lv+1;g.prestige+=2;push(`✨ ${m[1]} 升級到 Lv.${lv+2}`);save()}
 function startClass(type){let data={yoga:['瑜珈課','🧘',1200,6],spin:['飛輪課','🚴',1800,9],pt:['私人教練課','💪',2500,12]}[type];if(!g.staff.coach)return toastMsg('需要先聘請健身教練');if(g.money<data[2])return toastMsg('資金不足');g.money-=data[2];let gain=Math.round(data[3]*(1+g.rating/5));g.members+=Math.ceil(gain/3);g.rating=Math.min(5,g.rating+.06);g.prestige+=2;let earn=Math.round(gain*Math.round(g.fee/20)*(g.facilities?.ptzone?1.2:1));g.money+=earn;g.totalRevenue+=earn;push(`${data[1]} ${data[0]}爆滿！帶來 ${fmt(earn)} 收入`);save();toastMsg(`${data[0]} 開課成功`)}
@@ -138,7 +204,7 @@ render();
 if('serviceWorker' in navigator){
  window.addEventListener('load',async()=>{
   try{
-   const reg=await navigator.serviceWorker.register('./sw.js?v=90',{updateViaCache:'none'});
+   const reg=await navigator.serviceWorker.register('./sw.js?v=91',{updateViaCache:'none'});
    await reg.update();
    let refreshing=false;
    navigator.serviceWorker.addEventListener('controllerchange',()=>{

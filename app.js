@@ -1,5 +1,5 @@
-const KEY='gym_tycoon_v9';
-const PREVKEY='gym_tycoon_v8';
+const KEY='gym_tycoon_v10';
+const PREVKEY='gym_tycoon_v9';
 const OLDKEY='gym_tycoon_v1';
 const machines=[
  ['treadmill','跑步機','🏃',1200,3,'cardio'],['bench','臥推架','🏋️',1800,5,'strength'],['squat','深蹲架','🦵',2400,7,'strength'],['bike','飛輪車','🚴',3200,9,'cardio'],['cable','滑輪機','💪',4500,12,'strength'],['sauna','三溫暖','🧖',8000,20,'cardio']
@@ -36,6 +36,7 @@ function revenuePerVisitor(){let eq=machines.reduce((s,m)=>s+(g.machines[m[0]]||
 function hourly(){return Math.round(Math.min(g.members,capacity())*.22*revenuePerVisitor())}
 function save(){localStorage.setItem(KEY,JSON.stringify(g));render()}
 function push(s){g.events.unshift(s);g.events=g.events.slice(0,7)}
+function pixelFlash(text){let d=document.createElement('div');d.className='pixelMoneyFlash';d.textContent=text;document.body.appendChild(d);setTimeout(()=>d.remove(),850)}
 function toastMsg(s){let t=$('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400)}
 function tab(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');render()}
 function toggleLayoutMode(){
@@ -114,7 +115,7 @@ function nextHour(){if(animating)return;let visitors=Math.min(demand(),capacity(
  if(Math.random()<.10){let d=Math.floor(120+Math.random()*260);g.money=Math.max(0,g.money-d);push(`🔧 器材臨時維護支出 ${fmt(d)}`)}
  if(g.hour>=22){g.bestDay=Math.max(g.bestDay,g.todayIncome);let bonus=Math.round(g.todayIncome*.05);g.money+=bonus;g.prestige+=Math.max(1,Math.round(g.rating));push(`🌙 第 ${g.day} 天結束：營收 ${fmt(g.todayIncome)}，營運獎勵 ${fmt(bonus)}`);g.day++;if(g.day>1&&g.day%7===1)runLeague();g.hour=8;g.todayIncome=0}
  save();animateHour(visitors,servedCount,queueCount,earn)}
-function buyMachine(id){let m=machines.find(x=>x[0]===id),count=g.machines[id]||0,cost=Math.round(m[3]*(1+count*.35));if(g.money<cost)return toastMsg('資金不足');g.money-=cost;g.machines[id]=count+1;g.rating=Math.min(5,g.rating+.04);push(`🏋️ 新增 ${m[1]}，場館容量提升。`);save();renderScene();toastMsg(`${m[1]} 已進場，可到場館配置位置`) }
+function buyMachine(id){let m=machines.find(x=>x[0]===id),count=g.machines[id]||0,cost=Math.round(m[3]*(1+count*.35));if(g.money<cost)return toastMsg('資金不足');g.money-=cost;g.machines[id]=count+1;g.rating=Math.min(5,g.rating+.04);push(`🏋️ 新增 ${m[1]}，場館容量提升。`);save();renderScene();toastMsg(`${m[1]} 已進場，可到場館配置位置`);pixelFlash('EQUIPMENT +1') }
 function hire(id){let s=staffs.find(x=>x[0]===id);if(g.staff[id])return;if(g.money<s[3])return toastMsg('資金不足');g.money-=s[3];g.staff[id]=1;push(`🤝 ${s[1]} 加入團隊`);save()}
 function upgradeMachine(id){let m=machines.find(x=>x[0]===id),lv=(g.machineLv[id]||0),cost=Math.round(m[3]*(lv+1)*1.25);if(!(g.machines[id]>0))return toastMsg('請先購買器材');if(g.money<cost)return toastMsg('資金不足');g.money-=cost;g.machineLv[id]=lv+1;g.prestige+=2;push(`✨ ${m[1]} 升級到 Lv.${lv+2}`);save()}
 function startClass(type){let data={yoga:['瑜珈課','🧘',1200,6],spin:['飛輪課','🚴',1800,9],pt:['私人教練課','💪',2500,12]}[type];if(!g.staff.coach)return toastMsg('需要先聘請健身教練');if(g.money<data[2])return toastMsg('資金不足');g.money-=data[2];let gain=Math.round(data[3]*(1+g.rating/5));g.members+=Math.ceil(gain/3);g.rating=Math.min(5,g.rating+.06);g.prestige+=2;let earn=Math.round(gain*Math.round(g.fee/20)*(g.facilities?.ptzone?1.2:1));g.money+=earn;g.totalRevenue+=earn;push(`${data[1]} ${data[0]}爆滿！帶來 ${fmt(earn)} 收入`);save();toastMsg(`${data[0]} 開課成功`)}
@@ -204,7 +205,7 @@ render();
 if('serviceWorker' in navigator){
  window.addEventListener('load',async()=>{
   try{
-   const reg=await navigator.serviceWorker.register('./sw.js?v=91',{updateViaCache:'none'});
+   const reg=await navigator.serviceWorker.register('./sw.js?v=100',{updateViaCache:'none'});
    await reg.update();
    let refreshing=false;
    navigator.serviceWorker.addEventListener('controllerchange',()=>{

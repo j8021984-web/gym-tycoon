@@ -1,5 +1,5 @@
-const KEY='gym_tycoon_v10';
-const PREVKEY='gym_tycoon_v9';
+const KEY='gym_tycoon_v11';
+const PREVKEY='gym_tycoon_v10';
 const OLDKEY='gym_tycoon_v1';
 const machines=[
  ['treadmill','跑步機','🏃',1200,3,'cardio'],['bench','臥推架','🏋️',1800,5,'strength'],['squat','深蹲架','🦵',2400,7,'strength'],['bike','飛輪車','🚴',3200,9,'cardio'],['cable','滑輪機','💪',4500,12,'strength'],['sauna','三溫暖','🧖',8000,20,'cardio']
@@ -205,7 +205,7 @@ render();
 if('serviceWorker' in navigator){
  window.addEventListener('load',async()=>{
   try{
-   const reg=await navigator.serviceWorker.register('./sw.js?v=100',{updateViaCache:'none'});
+   const reg=await navigator.serviceWorker.register('./sw.js?v=110',{updateViaCache:'none'});
    await reg.update();
    let refreshing=false;
    navigator.serviceWorker.addEventListener('controllerchange',()=>{

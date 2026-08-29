@@ -109,7 +109,7 @@ render();
 if('serviceWorker' in navigator){
  window.addEventListener('load',async()=>{
   try{
-   const reg=await navigator.serviceWorker.register('./sw.js?v=71',{updateViaCache:'none'});
+   const reg=await navigator.serviceWorker.register('./sw.js?v=72',{updateViaCache:'none'});
    await reg.update();
    let refreshing=false;
    navigator.serviceWorker.addEventListener('controllerchange',()=>{

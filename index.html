@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111827"><link rel="manifest" href="manifest.webmanifest?v=130"><link rel="apple-touch-icon" href="icon-192.png"><title>GYM TYCOON V13 — LIVING GYM 2.0</title><style>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111827"><link rel="manifest" href="manifest.webmanifest?v=170"><link rel="apple-touch-icon" href="icon-192.png"><title>GYM TYCOON V17 — STAFF & MEMBER LIFE 2.0</title><style>
 :root{--bg:#071017;--card:#121c23;--card2:#17262f;--line:#2a3a44;--text:#f6f8f9;--muted:#93a4ae;--lime:#b8f34a;--gold:#ffc857;--red:#ff6b63;--blue:#62b7ff}*{box-sizing:border-box}body{margin:0;background:linear-gradient(#071017,#0d171e);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;padding-bottom:90px}button{font:inherit}header{position:sticky;top:0;z-index:20;background:#0a1218e8;backdrop-filter:blur(12px);padding:10px 14px;border-bottom:1px solid var(--line)}.top{max-width:980px;margin:auto;display:flex;justify-content:space-between;align-items:center}.logo{font-weight:1000;letter-spacing:1px}.logo b{color:var(--lime)}.tiny{border:1px solid var(--line);background:#17242c;color:#fff;border-radius:10px;padding:8px 10px}main{max-width:980px;margin:auto;padding:12px}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.stat,.card{background:linear-gradient(180deg,#16232b,#101920);border:1px solid var(--line);border-radius:16px;padding:12px}.stat small,.muted{color:var(--muted)}.stat strong{display:block;font-size:18px;margin-top:3px}.money{color:var(--lime)}.section{font-size:18px;font-weight:1000;margin:16px 2px 9px}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.buy{width:100%;border:0;border-radius:11px;background:var(--lime);color:#0c1506;font-weight:900;padding:11px}.buy:disabled{opacity:.38}.secondary{border:1px solid var(--line);border-radius:11px;background:#20303a;color:#fff;font-weight:800;padding:10px}.badge{background:#22323c;border-radius:99px;padding:4px 8px;font-size:11px;color:#d6e0e5}.progress{height:8px;background:#223038;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--lime)}.event{border-left:4px solid var(--gold);margin-bottom:7px}.machine{position:relative}.machine .ico{font-size:33px}.machine h3{margin:6px 0 3px}.machine p{font-size:12px;color:var(--muted);min-height:32px}.machine .badge{position:absolute;right:9px;top:9px}.page{display:none}.page.active{display:block}
 .sceneWrap{margin-top:10px;background:#0e171d;border:1px solid #34454f;border-radius:20px;padding:10px;overflow:hidden}.sceneTop{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 9px}.gym{position:relative;height:360px;border-radius:16px;overflow:hidden;background:linear-gradient(90deg,#16252c 49%,#132129 49%);border:1px solid #31434e}.gym:before{content:"";position:absolute;inset:0;background:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:40px 40px}.reception{position:absolute;left:3%;bottom:6%;width:24%;height:18%;background:#8b633b;border-radius:8px 8px 2px 2px;display:grid;place-items:center;font-size:12px;font-weight:900;color:white}.door{position:absolute;left:1%;bottom:1%;font-size:30px}.zone{position:absolute;border:1px dashed #526670;border-radius:12px;background:#ffffff08;padding:4px;font-size:10px;color:#9fb0b9}.z-cardio{left:31%;top:6%;width:65%;height:38%}.z-strength{left:31%;bottom:7%;width:65%;height:42%}.equip{position:absolute;touch-action:none;user-select:none;cursor:grab;width:54px;height:48px;border-radius:10px;background:#24343d;border:1px solid #52636d;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;box-shadow:0 5px 10px #0005}.equip small{font-size:8px;color:#b8c7ce}.memberDot{position:absolute;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f1f5f7;color:#172129;font-size:16px;box-shadow:0 4px 8px #0008;transition:left .7s ease,top .7s ease;z-index:7}.memberDot.busy{outline:3px solid #b8f34a99}.bubble{position:absolute;transform:translate(-25%,-115%);font-size:10px;background:#fff;color:#111;border-radius:8px;padding:3px 5px;white-space:nowrap;pointer-events:none}.sceneFooter{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}.mini{background:#111c22;border:1px solid #263740;border-radius:12px;padding:9px;text-align:center}.mini b{display:block;font-size:16px}.mini small{color:var(--muted)}
 .quest{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-bottom:8px}.quest.done{border-color:#5d8533}.quest h4{margin:0 0 4px}.reward{color:var(--gold);font-weight:900}.finance{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.finance .card{text-align:center}.vip{display:grid;grid-template-columns:48px 1fr;gap:10px;align-items:center;margin-bottom:8px}.avatar{width:46px;height:46px;border-radius:50%;background:#22343d;display:grid;place-items:center;font-size:25px}.memberProg{margin-top:7px}.abilityRow{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:7px;font-size:10px;color:#c9d5da}.abilityRow span{background:#17252c;border-radius:6px;padding:4px;text-align:center}.shiftBtns{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:7px 0}.shiftBtns button{padding:7px;font-size:11px}.shiftBtns .selected{border-color:var(--lime);color:var(--lime);box-shadow:inset 0 0 0 1px #b8f34a55}.empBtns{grid-template-columns:1fr 1fr 70px!important}.staffQuick{display:grid;grid-template-columns:1fr 1.5fr;gap:8px;margin-top:10px;align-items:center}.staffQuick>div{background:#17252c;border-radius:9px;padding:8px}.staffQuick small,.staffQuick b{display:block}.staffQuick b{font-size:20px;color:var(--gold)}.emp{display:grid;grid-template-columns:54px 1fr;gap:10px;align-items:center;margin-bottom:9px}.empAvatar{width:52px;height:52px;border-radius:12px;background:#20323b;display:grid;place-items:center;font-size:29px}.working{font-size:11px;color:var(--lime);font-weight:900}.empProg{margin:7px 0}.empBtns{display:grid;grid-template-columns:1fr 72px;gap:6px}.empBtns button{padding:8px}.empBtns .fire{background:#5b2824}.hireCard{margin-bottom:8px}.staffSummary{margin-bottom:10px}.staffSummary .buy{margin-top:10px}.facilitySpot{position:absolute;z-index:5;width:64px;min-height:42px;border:1px solid #40515c;background:#172a34dd;border-radius:11px;padding:5px;text-align:center;font-size:21px;box-shadow:0 4px 10px #0005}.facilitySpot small{display:block;font-size:8px;color:#d5e1e6;white-space:nowrap}.facilityCard{margin-bottom:9px}.smallIco{font-size:28px!important;margin:0 0 2px!important}.leagueHero{border-color:#7a6530;background:linear-gradient(180deg,#282316,#151b1e)}.rankBadge{font-size:25px;font-weight:1000;color:var(--gold)}.rivalRow{display:flex;justify-content:space-between;align-items:center;margin-top:7px}.rivalRow.me{border-color:var(--lime);box-shadow:inset 0 0 0 1px #b8f34a33}.danger{background:#47211f;color:#ffd4cf}.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(20px);background:#f8fafb;color:#111;padding:10px 14px;border-radius:99px;font-weight:900;opacity:0;transition:.25s;z-index:30;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}nav{position:fixed;bottom:0;left:0;right:0;background:#0a1218f5;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px calc(7px + env(safe-area-inset-bottom));z-index:25}nav button{border:0;background:none;color:var(--muted);font-size:10px;padding:5px}nav button span{display:block;font-size:20px;margin-bottom:2px}@media(max-width:650px){.stats{grid-template-columns:repeat(3,1fr)}.stats .stat:nth-child(4),.stats .stat:nth-child(5){grid-column:auto}.gym{height:330px}.grid{grid-template-columns:1fr 1fr}.finance{grid-template-columns:1fr 1fr}}
@@ -168,15 +168,112 @@ nav button.active{background:#263c4b!important;box-shadow:inset 0 -4px #e5ad31!i
 .npcBubble{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);font-size:10px;background:#fff;color:#111;border:2px solid #071016;padding:1px 3px;white-space:nowrap}
 .cashPop{position:absolute;z-index:90;color:#d6ff62;font:900 12px "Courier New";text-shadow:2px 2px #000;animation:cashUp 1s steps(5,end) forwards}@keyframes cashUp{to{transform:translateY(-28px);opacity:0}}
 .brokenEquip{filter:grayscale(1);outline:3px solid #e34e48!important}.brokenEquip:before{content:"🔧";position:absolute;top:-15px;right:-5px}
-</style></head><body><header><div class="top"><div class="logo">GYM <b>TYCOON</b> <small>V13 · LIVING GYM 2.0</small></div><button class="tiny" onclick="resetGame()">重開</button></div></header><main><div class="pixelTitle">🎮 <b>GYM TYCOON V13</b> // PIXEL GYM</div>
+
+.openStatus{font-size:8px!important;color:#9df27a!important}
+.openStatus.closed{color:#ff7a70!important}
+
+/* ===== V14 DAY & NIGHT OPERATIONS ===== */
+.opsPanel{background:#0f1d27;border:2px solid #435560;box-shadow:inset 0 0 0 2px #070b0f,3px 3px 0 #05080a;margin-bottom:8px;padding:7px}
+.opsTitle{display:flex;justify-content:space-between;font-weight:900;color:#f5c64d;font-size:11px;margin-bottom:6px}
+.opsTitle small{color:#c8d4da;font-size:8px}
+.opsTimeline{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.opsTimeline div{background:#172833;border:1px solid #42545e;padding:5px 2px;text-align:center;opacity:.55}
+.opsTimeline div.active{opacity:1;background:#263d49;outline:2px solid #e2ad36}
+.opsTimeline b{display:block;font-size:10px;color:#fff}.opsTimeline span{font-size:7px;color:#cfd9dd}
+.opsStatusRow{display:flex;justify-content:space-between;gap:5px;margin-top:6px;font-size:8px}
+.opsStatusRow span{background:#111a20;border:1px solid #42535c;padding:4px}
+.opsSettingGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0}
+.opsSettingGrid .card{text-align:center}
+.opsSettingGrid b{display:block;color:#f5c64d;margin-bottom:3px}
+.dailyOpsStats{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}
+.dailyOpsStats span{background:#14232c;border:1px solid #3f525c;padding:6px;font-size:9px}
+.dailyOpsStats b{float:right;color:#d9ff70}
+.gym.closedGym{filter:saturate(.45) brightness(.65)}
+.gym.closedGym:after{content:"🔒 CLOSED";position:absolute;inset:auto 50% 50% auto;transform:translate(50%,50%);z-index:100;background:#091017e8;border:3px solid #e34e48;color:#fff;padding:10px 14px;font:900 16px "Courier New";pointer-events:none}
+
+/* ===== V15 BUILD & EQUIPMENT SHOP ===== */
+.v15Builder{background:#0d1820;border:3px solid #05080b;box-shadow:inset 0 0 0 2px #4b5b65;padding:8px}
+.builderTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:8px 0}
+.builderTabs button.active{background:#c18a1d!important;color:#fff!important;box-shadow:inset 0 -3px #ffe286!important}
+.builderPane{display:none}.builderPane.active{display:block}
+.builderHint{background:#13222b;border:2px solid #40535f;color:#d7e3e8;padding:8px;font-size:10px;margin-bottom:7px}
+.v15ShopList,.warehouseList{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.shopItem,.warehouseItem{background:linear-gradient(#192c38,#101c25);border:2px solid #40525d;box-shadow:2px 2px #05080a;padding:7px}
+.shopItem .icon,.warehouseItem .icon{font-size:25px}.shopItem b,.warehouseItem b{display:block;font-size:10px;margin:3px 0}
+.shopItem small,.warehouseItem small{display:block;color:#9fb0b8;font-size:8px;line-height:1.45}
+.shopPrice{color:#f5c64d!important;font-size:10px!important;margin-top:4px}
+.stockBadge{display:inline-block;background:#263a45;border:1px solid #60717a;padding:2px 4px;font-size:7px;margin-top:4px}
+.placeToolbar{display:flex;gap:5px;align-items:center;margin-bottom:6px}
+.placeToolbar span{flex:1;background:#13232c;border:2px solid #40535d;padding:7px;font-size:9px;color:#f5d56e}
+.placeToolbar button{padding:7px}
+.buildLegend{display:flex;gap:6px;overflow:auto;margin-bottom:6px}.buildLegend span{white-space:nowrap;background:#14232c;border:1px solid #40535d;padding:4px;font-size:8px}.buildLegend .green{color:#8de95b}.buildLegend .red{color:#ff6d64}
+.buildCanvas{position:relative;height:370px;background-color:#343b3d;background-image:linear-gradient(#ffffff25 1px,transparent 1px),linear-gradient(90deg,#ffffff25 1px,transparent 1px);background-size:20px 20px;border:3px solid #05090d;overflow:hidden}
+.buildZone{position:absolute;border:2px dashed;font:900 9px "Courier New";display:grid;place-items:center;text-shadow:1px 1px #000;pointer-events:none}
+.zCardio{left:3%;top:4%;width:58%;height:26%;border-color:#78d64c;background:#65b64026}
+.zWeight{left:3%;top:35%;width:45%;height:28%;border-color:#55aaff;background:#3388dd24}
+.zMachine{left:3%;top:68%;width:55%;height:28%;border-color:#e6b63e;background:#d69a2424}
+.zClass{right:3%;top:4%;width:32%;height:31%;border-color:#c67bdb;background:#9b55b522}
+.zVip{right:3%;top:42%;width:32%;height:24%;border-color:#ef9f28;background:#cf7c2022}
+.buildGhost{display:none;position:absolute;width:46px;height:46px;transform:translate(-50%,-50%);z-index:20;background:#1f323d;border:3px solid #7ee34c;box-shadow:0 0 0 2px #05080b,0 0 12px #7ee34c;font-size:22px;text-align:center;place-items:center}
+.buildGhost.active{display:grid}.buildGhost.invalid{border-color:#ef5148;box-shadow:0 0 0 2px #05080b,0 0 12px #ef5148}
+.buildGhost small{position:absolute;top:44px;background:#081017;color:#fff;font-size:6px;padding:1px 3px;white-space:nowrap}
+.buildActions{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:5px;margin-top:7px}.confirmPlace{background:#2f7a2b!important}.dangerBtn{background:#8a2f2b!important}
+.v15BuildShortcut{width:100%;margin-bottom:8px;background:#b47a17!important;color:#fff!important}
+.rotation90{transform:translate(-50%,-50%) rotate(90deg)!important}
+.rotation180{transform:translate(-50%,-50%) rotate(180deg)!important}
+.rotation270{transform:translate(-50%,-50%) rotate(270deg)!important}
+
+/* ===== V16 BUILDING & INTERIOR ===== */
+.v16Shell{background:#0d1820;border:3px solid #05080b;box-shadow:inset 0 0 0 2px #4b5b65;padding:8px}
+.v16Tabs{grid-template-columns:repeat(4,1fr)}
+.v16Pane{display:none}.v16Pane.active{display:block}
+.v16Catalog{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.v16Item{background:linear-gradient(#192c38,#101c25);border:2px solid #40525d;box-shadow:2px 2px #05080a;padding:7px}
+.v16Item .icon{font-size:26px}.v16Item b{display:block;font-size:10px;margin:3px 0}.v16Item small{display:block;font-size:8px;color:#a7b5bc;line-height:1.4}
+.v16Item .cost{color:#f5c64d;font-size:10px;margin:4px 0}
+.v16SelectedBar{display:flex;gap:5px;align-items:center;margin:7px 0}
+.v16SelectedBar span{flex:1;background:#13232c;border:2px solid #40535d;padding:7px;font-size:9px;color:#f5d56e}
+.v16Canvas{position:relative;height:380px;background-color:#30383a;background-image:linear-gradient(#ffffff20 1px,transparent 1px),linear-gradient(90deg,#ffffff20 1px,transparent 1px);background-size:20px 20px;border:3px solid #05090d;overflow:hidden}
+.v16Zone{position:absolute;border:2px dashed;font:900 9px "Courier New";display:grid;place-items:center;pointer-events:none}
+.zoneA{left:3%;top:4%;width:62%;height:90%;border-color:#4fa3e3;background:#3388dd12}
+.zoneB{right:3%;top:4%;width:27%;height:90%;border-color:#e3aa45;background:#d8962e12}
+.v16Ghost{display:none;position:absolute;width:42px;height:42px;transform:translate(-50%,-50%);z-index:40;place-items:center;background:#1c303a;border:3px solid #79db4c;box-shadow:0 0 0 2px #05080a;font-size:22px}
+.v16Ghost.active{display:grid}.v16Ghost.invalid{border-color:#eb5047}
+.v16Placed{position:absolute;z-index:25;display:grid;place-items:center;transform:translate(-50%,-50%);font-size:20px;background:#1b2d36;border:2px solid #546872;box-shadow:2px 2px #05080a}
+.v16Placed.wall{width:20px;height:46px;background:#59666d}
+.v16Placed.door{width:28px;height:42px;background:#754e2f}
+.v16Placed.room{width:52px;height:52px;background:#233946}
+.v16Placed.decor{width:36px;height:36px;background:#24382a}
+.v16Placed.demolish{outline:3px solid #ef5148;cursor:pointer}
+.v16Stats{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px}
+.v16Stats div{background:#14232c;border:1px solid #40535d;padding:7px;font-size:8px}
+.v16Stats b{display:block;color:#f5c64d;font-size:12px;margin-top:2px}
+.v16Shortcut{width:100%;margin-bottom:8px;background:#7957a8!important;color:#fff!important}
+
+/* ===== V17 STAFF & MEMBER LIFE 2.0 ===== */
+.v17Shell{background:#0d1820;border:3px solid #05080b;box-shadow:inset 0 0 0 2px #4b5b65;padding:8px}.v17HomePanel{display:flex;justify-content:space-between;gap:8px;align-items:center;background:#182831;border:2px solid #52626b;box-shadow:3px 3px #05080b;padding:8px;margin-bottom:8px}.v17HomePanel b{display:block;color:#f4c651;font-size:10px}.v17HomePanel span{display:block;color:#aebdc4;font-size:8px;margin-top:2px}.v17HomePanel button{white-space:nowrap;font-size:8px}.v17LiveStats{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px}.v17LiveStats div{background:#14232c;border:2px solid #40535d;padding:7px}.v17LiveStats span{display:block;font-size:8px;color:#aebdc4}.v17LiveStats b{display:block;font-size:14px;color:#f5cf59;margin-top:2px}.v17TimelineCard,.v17Panel{background:#13222b;border:2px solid #40535d;box-shadow:2px 2px #05080b;padding:7px;margin-bottom:8px}.v17CardTitle{font-weight:900;font-size:10px;color:#f0d278;margin-bottom:5px}.v17ActivityFeed{max-height:140px;overflow:auto;display:flex;flex-direction:column;gap:4px}.v17ActivityItem{background:#0c171d;border-left:3px solid #5c7380;padding:5px;font-size:8px;line-height:1.45}.v17ActivityItem.good{border-left-color:#6fd04b}.v17ActivityItem.warn{border-left-color:#e4a73d}.v17ActivityItem.bad{border-left-color:#e35c52}.v17Split{display:grid;grid-template-columns:1fr;gap:7px}.v17Legend{display:flex;gap:4px;overflow:auto;margin-bottom:5px}.v17Legend span{white-space:nowrap;background:#0e1b22;border:1px solid #40535d;padding:3px 4px;font-size:7px}.v17PeopleList{display:flex;flex-direction:column;gap:4px}.v17Person{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:6px;background:#0f1b22;border:1px solid #344953;padding:5px}.v17Avatar{font-size:20px}.v17Person b{font-size:8px}.v17Person small{display:block;color:#98a9b0;font-size:7px;line-height:1.4}.v17State{font-size:7px;padding:3px 4px;border:1px solid #536772;background:#172832;white-space:nowrap}.v17MoodBar{height:4px;background:#263740;margin-top:3px}.v17MoodFill{height:100%;background:#70c94d}.v17EventStats{display:grid;grid-template-columns:1fr 1fr;gap:5px}.v17EventStats div{background:#0e1a21;border:1px solid #374b55;padding:6px;font-size:8px}.v17EventStats b{display:block;font-size:12px;color:#f4c653;margin-top:2px}.v17Npc{position:absolute;z-index:60;width:24px;height:28px;transform:translate(-50%,-50%);font-size:18px;display:grid;place-items:center;transition:left .7s steps(5),top .7s steps(5)}.v17Npc.member{filter:drop-shadow(2px 2px #000)}.v17Npc.staff{outline:1px solid #f4c651;background:#18232b}.v17Npc .bubble{position:absolute;left:16px;top:-8px;background:#fff;color:#111;border:1px solid #000;font-size:9px;padding:1px 2px;min-width:14px;text-align:center}
+</style></head><body><header><div class="top"><div class="logo">GYM <b>TYCOON</b> <small>V17 · STAFF & MEMBER LIFE 2.0</small></div><button class="tiny" onclick="resetGame()">重開</button></div></header><main><div class="pixelTitle">🎮 <b>GYM TYCOON V17</b> // PIXEL GYM</div>
 <div class="stats"><div class="stat"><small>💰 資金</small><strong id="money" class="money">$0</strong></div><div class="stat"><small>👥 會員</small><strong id="members">0</strong></div><div class="stat"><small>⭐ 評價</small><strong id="rating">0</strong></div><div class="stat"><small>🏆 聲望</small><strong id="prestige">0</strong></div><div class="stat"><small>📅 天數</small><strong id="day">1</strong></div></div>
-<section id="home" class="page active"><div class="sceneWrap"><div class="sceneTop"><div><b id="levelText">我的健身房</b><div class="muted" id="sceneStatus">準備營業</div></div><div class="badge" id="clock">08:00</div></div><div class="layoutToolbar">
+<section id="home" class="page active"><div class="v17HomePanel"><div><b>V17 LIVE GYM</b><span id="v17HomeStatus">會員與員工 AI 運作中</span></div><button onclick="tab('life2');renderV17Life()">查看即時人物 →</button></div><div class="sceneWrap"><div class="sceneTop"><div><b id="levelText">我的健身房</b><div class="muted" id="sceneStatus">準備營業</div></div><div class="badge" id="clock">08:00</div></div><div class="layoutToolbar">
 <button id="layoutModeBtn" class="secondary" onclick="toggleLayoutMode()">🛠️ 器材配置：關閉</button>
 <button class="secondary" onclick="resetLayout()">↺ 重設位置</button>
 </div>
 <div id="layoutHint" class="layoutHint">開啟「器材配置」後，可直接拖曳場內器材。</div>
-<div class="simBar"><div>👥 館內 <b id="simPeople">0</b></div><div>⌛ 排隊 <b id="simQueue">0</b></div><div>🔧 故障 <b id="simBroken">0</b></div><div>💰 今日 <b id="simIncome">$0</b></div></div><div class="speedBar"><button onclick="setGameSpeed(0)">⏸</button><button onclick="setGameSpeed(1)">1×</button><button onclick="setGameSpeed(2)">2×</button><button onclick="setGameSpeed(3)">3×</button><span id="dayPhase">🌅 早晨</span></div><div id="gymScene" class="gym"><div id="placementHud" class="placementHud">配置模式：關閉</div><div id="gridCoord" class="gridCoord"></div><div class="zone z-cardio">有氧區</div><div class="zone z-strength">重量訓練區</div><div class="door">🚪</div><div class="reception">櫃 檯</div></div><div class="sceneFooter"><div class="mini"><small>場內人數</small><b id="visitors">0</b></div><div class="mini"><small>等待器材</small><b id="queue">0</b></div><div class="mini"><small>每小時預估</small><b id="hourlyText">$0</b></div></div></div><div class="section">今日營運</div><div class="card"><div class="row"><b>08:00 → 22:00</b><span id="incomeText" class="money">$0</span></div><div class="progress" style="margin:9px 0 12px"><i id="daybar"></i></div><button id="operateBtn" class="buy" onclick="nextHour()">▶ 營業 1 小時</button></div><div class="section">常客會員</div><div class="card" style="margin-bottom:8px"><div class="row"><b>🧑‍🏫 教練培養</b><b id="coachLv">Lv.1</b></div><div class="progress" style="margin-top:8px"><i id="coachXp"></i></div><div class="muted" style="margin-top:6px">聘請教練後，服務會員會累積教練經驗。</div></div><div id="memberRoster"></div><div class="section">最新消息</div><div id="events"></div></section>
-<section id="equipment" class="page"><button class="v11Configure" onclick="tab('layout')">🔨 進入器材配置中心</button><div class="card equipSetupCard">
+<div class="opsPanel">
+  <div class="opsTitle">🕒 今日營運流程 <small>06:00–24:00</small></div>
+  <div class="opsTimeline">
+    <div data-hour="6"><b>06</b><span>開店準備</span></div>
+    <div data-hour="9"><b>09</b><span>晨間客流</span></div>
+    <div data-hour="17"><b>17</b><span>晚間尖峰</span></div>
+    <div data-hour="22"><b>22</b><span>最後入場</span></div>
+    <div data-hour="24"><b>24</b><span>打烊結算</span></div>
+  </div>
+  <div class="opsStatusRow">
+    <span id="opsTask">🧹 開店前清潔</span>
+    <span id="lastEntry">最後入場 22:30</span>
+  </div>
+</div><div class="simBar"><div>👥 館內 <b id="simPeople">0</b></div><div>⌛ 排隊 <b id="simQueue">0</b></div><div>🔧 故障 <b id="simBroken">0</b></div><div>💰 今日 <b id="simIncome">$0</b></div></div><div class="speedBar"><button onclick="setGameSpeed(0)">⏸</button><button onclick="setGameSpeed(1)">1×</button><button onclick="setGameSpeed(2)">2×</button><button onclick="setGameSpeed(3)">3×</button><span id="dayPhase">🌅 早晨</span><span id="openStatus" class="openStatus">🟢 營業中 06:00–24:00</span></div><div id="gymScene" class="gym"><div id="placementHud" class="placementHud">配置模式：關閉</div><div id="gridCoord" class="gridCoord"></div><div class="zone z-cardio">有氧區</div><div class="zone z-strength">重量訓練區</div><div class="door">🚪</div><div class="reception">櫃 檯</div></div><div class="sceneFooter"><div class="mini"><small>場內人數</small><b id="visitors">0</b></div><div class="mini"><small>等待器材</small><b id="queue">0</b></div><div class="mini"><small>每小時預估</small><b id="hourlyText">$0</b></div></div></div><div class="section">今日營運</div><div class="card"><div class="row"><b>08:00 → 22:00</b><span id="incomeText" class="money">$0</span></div><div class="progress" style="margin:9px 0 12px"><i id="daybar"></i></div><button id="operateBtn" class="buy" onclick="nextHour()">▶ 營業 1 小時</button></div><div class="section">常客會員</div><div class="card" style="margin-bottom:8px"><div class="row"><b>🧑‍🏫 教練培養</b><b id="coachLv">Lv.1</b></div><div class="progress" style="margin-top:8px"><i id="coachXp"></i></div><div class="muted" style="margin-top:6px">聘請教練後，服務會員會累積教練經驗。</div></div><div id="memberRoster"></div><div class="section">最新消息</div><div id="events"></div></section>
+<section id="equipment" class="page"><button class="v15BuildShortcut" onclick="tab('builder');renderV15Builder()">🧱 V15 建造模式／器材商店</button><button class="v11Configure" onclick="tab('layout')">🔨 進入器材配置中心</button><div class="card equipSetupCard">
 <div class="row"><div><b>🛠️ 場館器材配置</b><div class="muted">購買器材後，可到場館直接拖曳擺放。</div></div></div>
 <button class="buy" onclick="tab('home');setTimeout(()=>{if(!layoutEdit)toggleLayoutMode()},50)">前往配置器材</button>
 </div><div class="section">器材商店</div><div class="card" style="margin-bottom:10px"><b>擺設會自動出現在健身房場景</b><p class="muted" style="margin-bottom:0">器材越多，尖峰時段排隊越少。回到場館後可用手指直接拖曳器材，自由調整擺設。</p></div><div id="machineList" class="grid"></div></section>
@@ -245,4 +342,154 @@ nav button.active{background:#263c4b!important;box-shadow:inset 0 -4px #e5ad31!i
   <div class="previewZone classZ">🧘 團課</div><div class="previewZone vipZ">👑 VIP</div>
  </div>
  <div class="card placementRules"><b>📌 配置規則</b><p>器材不能放到場館外。開啟配置模式後，所有可移動器材都會亮綠框；拖曳時會顯示目前格子座標，放開後自動吸附格線並儲存。</p></div>
-</div></section></main><nav><button onclick="tab('home')"><span>🏠</span>場館</button><button onclick="tab('equipment')"><span>🏋️</span>器材</button><button onclick="tab('staff')"><span>🧑‍🏫</span>員工</button><button onclick="tab('mission')"><span>📋</span>任務</button><button onclick="tab('upgrade')"><span>🚀</span>升級</button><button onclick="tab('memberlife')"><span>👤</span>會員人生</button><button onclick="tab('build')"><span>🏗️</span>建造</button><button onclick="tab('layout')"><span>🔨</span>配置</button></nav><div id="toast" class="toast"></div><script src="app.js?v=130"></script></body></html>
+</div></section><section id="operations" class="page">
+<div class="v11Window">
+  <div class="v11WindowTitle"><span>🕒 營運設定</span><small>V14 OPERATIONS</small></div>
+  <div class="card">
+    <b>🏪 固定營業時間</b>
+    <p class="muted">每日 06:00 開門，24:00 打烊。22:30 起停止新會員入場。</p>
+  </div>
+  <div class="opsSettingGrid">
+    <div class="card"><b>🌅 06:00</b><span>開門</span></div>
+    <div class="card"><b>🧹 05:00–06:00</b><span>清潔／巡檢</span></div>
+    <div class="card"><b>🚪 22:30</b><span>最後入場</span></div>
+    <div class="card"><b>🌙 24:00</b><span>打烊結算</span></div>
+  </div>
+  <div class="card">
+    <b>👥 班表影響</b>
+    <p class="muted">早班員工在開店前提升清潔與設備狀態；晚班員工會降低尖峰排隊壓力；維修人員在打烊後更容易修復故障器材。</p>
+  </div>
+  <div class="card">
+    <b>📊 今日營運紀錄</b>
+    <div class="dailyOpsStats">
+      <span>進場 <b id="opsVisitors">0</b></span>
+      <span>尖峰排隊 <b id="opsPeakQueue">0</b></span>
+      <span>維修 <b id="opsRepairs">0</b></span>
+      <span>營收 <b id="opsRevenue">$0</b></span>
+    </div>
+  </div>
+</div>
+</section>
+<section id="builder" class="page"><button class="v16Shortcut" onclick="tab('interior');renderV16()">🏗️ V16 建築／裝潢模式</button>
+<div class="v15Builder">
+  <div class="v11WindowTitle"><span>🧱 建造模式 & 器材商店</span><small>V15 BUILD SYSTEM</small></div>
+
+  <div class="builderTabs">
+    <button onclick="showBuilderTab('shop')" id="builderShopBtn" class="active">🛒 器材商店</button>
+    <button onclick="showBuilderTab('warehouse')" id="builderWarehouseBtn">📦 倉庫</button>
+    <button onclick="showBuilderTab('place')" id="builderPlaceBtn">▦ 配置</button>
+  </div>
+
+  <div id="builderShop" class="builderPane active">
+    <div class="builderHint">購買器材後會先進入倉庫，不會直接出現在場館。</div>
+    <div id="v15ShopList" class="v15ShopList"></div>
+  </div>
+
+  <div id="builderWarehouse" class="builderPane">
+    <div class="builderHint">從倉庫選擇器材，再進入場館放置。</div>
+    <div id="warehouseList" class="warehouseList"></div>
+  </div>
+
+  <div id="builderPlace" class="builderPane">
+    <div class="placeToolbar">
+      <span id="selectedBuildItem">尚未選擇器材</span>
+      <button onclick="rotateBuildItem()">↻ 旋轉</button>
+      <button onclick="cancelBuildItem()">✕ 取消</button>
+    </div>
+    <div class="buildLegend">
+      <span class="green">■ 可放置</span>
+      <span class="red">■ 衝突／場外</span>
+      <span>▦ 放開自動吸附格線</span>
+    </div>
+    <div id="buildCanvas" class="buildCanvas">
+      <div class="buildZone zCardio">有氧區</div>
+      <div class="buildZone zWeight">自由重量</div>
+      <div class="buildZone zMachine">機械區</div>
+      <div class="buildZone zClass">團課</div>
+      <div class="buildZone zVip">VIP</div>
+      <div id="buildGhost" class="buildGhost">🏋️<small>預覽</small></div>
+    </div>
+    <div class="buildActions">
+      <button class="confirmPlace" onclick="confirmBuildPlacement()">✅ 放置器材</button>
+      <button onclick="moveExistingEquipment()">✋ 移動既有器材</button>
+      <button class="dangerBtn" onclick="sellSelectedEquipment()">💰 出售選取器材</button>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="interior" class="page">
+<div class="v16Shell">
+  <div class="v11WindowTitle"><span>🏗️ 建築／裝潢模式</span><small>V16 BUILDING SYSTEM</small></div>
+
+  <div class="builderTabs v16Tabs">
+    <button class="active" id="v16TabStructureBtn" onclick="showV16Tab('structure')">🧱 建築</button>
+    <button id="v16TabRoomBtn" onclick="showV16Tab('room')">🚪 房間</button>
+    <button id="v16TabDecorBtn" onclick="showV16Tab('decor')">🪴 裝潢</button>
+    <button id="v16TabManageBtn" onclick="showV16Tab('manage')">⚙️ 管理</button>
+  </div>
+
+  <div id="v16Structure" class="v16Pane active">
+    <div class="builderHint">先選建築元件，再點擊格子放置。牆壁與門會影響場館動線。</div>
+    <div id="v16StructureList" class="v16Catalog"></div>
+  </div>
+
+  <div id="v16Room" class="v16Pane">
+    <div class="builderHint">房間會提升會員體驗，但也會增加建造成本與每日維護費。</div>
+    <div id="v16RoomList" class="v16Catalog"></div>
+  </div>
+
+  <div id="v16Decor" class="v16Pane">
+    <div class="builderHint">裝潢可提高評價、滿意度與場館吸引力。</div>
+    <div id="v16DecorList" class="v16Catalog"></div>
+  </div>
+
+  <div id="v16Manage" class="v16Pane">
+    <div class="v16Stats">
+      <div>🧱 建築物件<b id="v16BuiltCount">0</b></div>
+      <div>⭐ 裝潢加成<b id="v16DecorBonus">0</b></div>
+      <div>😊 滿意加成<b id="v16HappyBonus">0</b></div>
+      <div>💸 每日維護<b id="v16Maintenance">$0</b></div>
+    </div>
+    <div class="card">
+      <b>🗑️ 拆除模式</b>
+      <p class="muted">開啟後點擊場館中的建築物件即可拆除，返還 50% 建造費。</p>
+      <button id="demolishBtn" onclick="toggleDemolishMode()">拆除模式：關閉</button>
+    </div>
+  </div>
+
+  <div class="v16SelectedBar">
+    <span id="v16Selected">尚未選擇建築物件</span>
+    <button onclick="rotateV16()">↻ 旋轉</button>
+    <button onclick="cancelV16()">✕ 取消</button>
+  </div>
+
+  <div class="buildLegend">
+    <span class="green">■ 綠色＝可建造</span>
+    <span class="red">■ 紅色＝衝突</span>
+    <span>▦ 點格子放置</span>
+  </div>
+
+  <div id="v16Canvas" class="v16Canvas">
+    <div class="v16Zone zoneA">訓練區</div>
+    <div class="v16Zone zoneB">服務區</div>
+    <div id="v16Ghost" class="v16Ghost">🧱</div>
+  </div>
+
+  <div class="buildActions">
+    <button class="confirmPlace" onclick="confirmV16Placement()">✅ 建造</button>
+    <button onclick="tab('builder');renderV15Builder()">🏋️ 器材模式</button>
+    <button onclick="tab('home')">🏠 回主場館</button>
+  </div>
+</div>
+</section>
+
+<section id="life2" class="page">
+<div class="v17Shell">
+  <div class="v11WindowTitle"><span>👥 會員 & 員工 AI 2.0</span><small>V17 LIVING GYM</small></div>
+  <div class="v17LiveStats"><div><span>👤 館內會員</span><b id="v17LiveMembers">0</b></div><div><span>👔 工作員工</span><b id="v17LiveStaff">0</b></div><div><span>⌛ 排隊</span><b id="v17LiveQueue">0</b></div><div><span>😊 平均心情</span><b id="v17Mood">--</b></div></div>
+  <div class="v17TimelineCard"><div class="v17CardTitle">🏃 即時場館動態</div><div id="v17ActivityFeed" class="v17ActivityFeed"></div></div>
+  <div class="v17Split"><div class="v17Panel"><div class="v17CardTitle">👥 會員 AI</div><div class="v17Legend"><span>🎯 依目標選器材</span><span>🚿 使用設施</span><span>⌛ 會排隊</span><span>😠 等太久可能離場</span></div><div id="v17MemberList" class="v17PeopleList"></div></div><div class="v17Panel"><div class="v17CardTitle">👔 員工工作 AI</div><div class="v17Legend"><span>🛎️ 櫃檯報到</span><span>🏋️ 教練指導</span><span>🧹 清潔巡場</span><span>🔧 維修巡檢</span></div><div id="v17StaffList" class="v17PeopleList"></div></div></div>
+  <div class="v17TimelineCard"><div class="v17CardTitle">📊 今日會員事件</div><div class="v17EventStats"><div>⭐ 好評<b id="v17Reviews">0</b></div><div>🤝 推薦好友<b id="v17Referrals">0</b></div><div>💎 VIP 升級<b id="v17VipUps">0</b></div><div>🚪 不滿離場<b id="v17Walkouts">0</b></div></div></div>
+</div></section>
+</main><nav><button onclick="tab('home')"><span>🏠</span>場館</button><button onclick="tab('equipment')"><span>🏋️</span>器材</button><button onclick="tab('staff')"><span>🧑‍🏫</span>員工</button><button onclick="tab('mission')"><span>📋</span>任務</button><button onclick="tab('upgrade')"><span>🚀</span>升級</button><button onclick="tab('memberlife')"><span>👤</span>會員人生</button><button onclick="tab('build')"><span>🏗️</span>建造</button><button onclick="tab('layout')"><span>🔨</span>配置</button><button onclick="tab('operations')"><span>🕒</span>營運</button><button onclick="tab('builder');renderV15Builder()"><span>🧱</span>建造</button><button onclick="tab('interior');renderV16()"><span>🏗️</span>裝潢</button><button onclick="tab('life2');renderV17Life()"><span>👥</span>生活</button></nav><div id="toast" class="toast"></div><script src="app.js?v=170"></script></body></html>

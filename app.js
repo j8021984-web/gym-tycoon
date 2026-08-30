@@ -1,5 +1,5 @@
-const KEY='gym_tycoon_v13';
-const PREVKEY='gym_tycoon_v12';
+const KEY='gym_tycoon_v17';
+const PREVKEY='gym_tycoon_v16';
 const OLDKEY='gym_tycoon_v1';
 const machines=[
  ['treadmill','跑步機','🏃',1200,3,'cardio'],['bench','臥推架','🏋️',1800,5,'strength'],['squat','深蹲架','🦵',2400,7,'strength'],['bike','飛輪車','🚴',3200,9,'cardio'],['cable','滑輪機','💪',4500,12,'strength'],['sauna','三溫暖','🧖',8000,20,'cardio']
@@ -55,14 +55,273 @@ function resetLayout(){
 }
 function setFee(v){g.fee=+v;save()}
 function machineSlots(){let out=[];let cardio=[[39,17],[52,17],[65,17],[78,17],[39,31],[52,31],[65,31],[78,31]];let strength=[[39,59],[52,59],[65,59],[78,59],[39,75],[52,75],[65,75],[78,75]];let ci=0,si=0;machines.forEach(m=>{for(let i=0;i<(g.machines[m[0]]||0);i++){let arr=m[5]==='cardio'?cardio:strength;let idx=m[5]==='cardio'?ci++:si++;let p=arr[idx%arr.length];out.push({id:m[0],name:m[1],icon:m[2],x:p[0]+Math.floor(idx/arr.length)*4,y:p[1]})}});return out}
-let gameSpeed=1,simTick=0,simTodayIncome=0,brokenKeys=new Set();
+
+
+
+let v17Members=[],v17StaffAgents=[],v17Feed=[],v17Tick=0;
+let v17Stats={reviews:0,referrals:0,vipUps:0,walkouts:0};
+const v17MemberNames=['阿哲','小宇','雅婷','家豪','怡君','柏翰','詩涵','俊傑','宥辰','佩珊','昱廷','佳穎'];
+const v17Goals=['減脂','增肌','體態','健康','力量'];
+function v17PushFeed(text,type=''){v17Feed.unshift({text,type,time:((Math.floor(v17Tick/6)+6)%24)});v17Feed=v17Feed.slice(0,16)}
+function v17InitAgents(){
+ if(v17Members.length)return;
+ let count=Math.max(4,Math.min(10,Math.round((g.members||8)/8)));
+ for(let i=0;i<count;i++)v17Members.push({id:'m'+i,name:v17MemberNames[i%v17MemberNames.length],goal:v17Goals[i%v17Goals.length],mood:75+Math.floor(Math.random()*20),state:'報到',wait:0,x:8+Math.random()*20,y:72+Math.random()*15,target:null,vip:Math.random()<.18});
+ let roles=['櫃檯','教練','清潔','維修'];let staffCount=Math.max(2,Math.min(6,Array.isArray(g.employees)?g.employees.length:4));
+ for(let i=0;i<staffCount;i++)v17StaffAgents.push({id:'s'+i,name:'員工'+(i+1),role:roles[i%roles.length],state:'巡場',x:50+Math.random()*35,y:72+Math.random()*18});
+}
+function v17Targets(){let equipment=[];Object.entries(g.layout||{}).forEach(([key,p])=>{if(p&&typeof p.x==='number'&&typeof p.y==='number')equipment.push({key,x:p.x,y:p.y,type:p.type||key})});let facilities=[];Object.entries(g.v16Build||{}).forEach(([key,o])=>{if(o&&['locker','showerRoom','toilet','loungeRoom','counter'].includes(o.type))facilities.push({key,x:o.x,y:o.y,type:o.type})});return{equipment,facilities}}
+function v17PickTarget(member){let {equipment,facilities}=v17Targets();if(member.state==='淋浴'){let s=facilities.filter(x=>x.type==='showerRoom'||x.type==='locker');if(s.length)return s[Math.floor(Math.random()*s.length)]}if(member.state==='休息'){let s=facilities.filter(x=>x.type==='loungeRoom');if(s.length)return s[Math.floor(Math.random()*s.length)]}if(equipment.length)return equipment[Math.floor(Math.random()*equipment.length)];return{x:45+Math.random()*25,y:45+Math.random()*25,type:'floor'}}
+function v17StepMember(m){
+ if(typeof isOpen==='function'&&!isOpen()){m.state='準備離場';m.x=8;m.y=88;return}
+ let r=Math.random();if(m.state==='報到'){m.state='熱身';m.x=18;m.y=78;return}if(m.state==='準備離場'){m.x=8;m.y=88;return}
+ if(r<.12){m.state='排隊';m.wait++;m.mood-=3;m.target=v17PickTarget(m)}else if(r<.25){m.state='休息';m.target=v17PickTarget({...m,state:'休息'})}else if(r<.34){m.state='淋浴';m.target=v17PickTarget({...m,state:'淋浴'})}else{m.state='訓練';m.wait=Math.max(0,m.wait-1);m.target=v17PickTarget(m);m.mood=Math.min(100,m.mood+1)}
+ if(m.target){m.x=m.target.x;m.y=m.target.y}
+ if(m.wait>=4){m.mood-=7;if(m.mood<45&&Math.random()<.35){m.state='準備離場';m.x=8;m.y=88;v17Stats.walkouts++;v17PushFeed('😠 '+m.name+' 等候太久，決定提早離場','bad');m.wait=0}}
+ if(m.mood>88&&Math.random()<.025){v17Stats.reviews++;v17PushFeed('⭐ '+m.name+' 對今天的訓練體驗留下好評','good')}
+ if(m.mood>84&&Math.random()<.018){v17Stats.referrals++;g.members=(g.members||0)+1;v17PushFeed('🤝 '+m.name+' 推薦了一位朋友加入','good')}
+ if(!m.vip&&m.mood>92&&Math.random()<.01){m.vip=true;v17Stats.vipUps++;g.money+=300;v17PushFeed('💎 '+m.name+' 升級成 VIP 會員','good')}
+}
+function v17StepStaff(s){let {equipment,facilities}=v17Targets();if(s.role==='櫃檯'){let c=facilities.find(x=>x.type==='counter');s.state='處理報到';if(c){s.x=c.x;s.y=c.y}else{s.x=15;s.y=82}}else if(s.role==='教練'){let m=v17Members.find(x=>x.state==='訓練');s.state=m?'指導會員':'巡場';if(m){s.x=m.x+3;s.y=m.y+3}}else if(s.role==='清潔'){s.state='清潔巡場';s.x=20+Math.random()*65;s.y=20+Math.random()*65;if(Math.random()<.08)v17PushFeed('🧹 清潔員完成一區清潔，會員滿意度提升','good')}else{s.state='檢查器材';let e=equipment[Math.floor(Math.random()*equipment.length)];if(e){s.x=e.x+2;s.y=e.y+2}if(Array.isArray(brokenKeys)&&brokenKeys.length&&Math.random()<.25){brokenKeys.shift();v17PushFeed('🔧 維修員修復了一台故障器材','good')}}}
+function v17RenderNpcs(){let scene=$('gymScene')||document.querySelector('.gym');if(!scene)return;scene.querySelectorAll('.v17Npc').forEach(n=>n.remove());v17Members.forEach(m=>{let d=document.createElement('div');d.className='v17Npc member';d.style.left=m.x+'%';d.style.top=m.y+'%';let bubble=m.state==='排隊'?'⌛':m.state==='訓練'?'💪':m.state==='淋浴'?'🚿':m.state==='休息'?'💬':'';d.innerHTML=(m.vip?'💎':'🧍')+(bubble?'<span class="bubble">'+bubble+'</span>':'');scene.appendChild(d)});v17StaffAgents.forEach(s=>{let icon=s.role==='櫃檯'?'🧑‍💼':s.role==='教練'?'🏋️':s.role==='清潔'?'🧹':'🔧';let d=document.createElement('div');d.className='v17Npc staff';d.style.left=s.x+'%';d.style.top=s.y+'%';d.innerHTML=icon;scene.appendChild(d)})}
+function renderV17Life(){v17InitAgents();if($('v17LiveMembers'))$('v17LiveMembers').textContent=v17Members.filter(x=>x.state!=='準備離場').length;if($('v17LiveStaff'))$('v17LiveStaff').textContent=v17StaffAgents.length;if($('v17LiveQueue'))$('v17LiveQueue').textContent=v17Members.filter(x=>x.state==='排隊').length;let avg=v17Members.length?Math.round(v17Members.reduce((a,b)=>a+b.mood,0)/v17Members.length):0;if($('v17Mood'))$('v17Mood').textContent=avg+'%';let feed=$('v17ActivityFeed');if(feed)feed.innerHTML=v17Feed.length?v17Feed.map(x=>'<div class="v17ActivityItem '+x.type+'"><b>'+String(x.time).padStart(2,'0')+':00</b> '+x.text+'</div>').join(''):'<div class="v17ActivityItem">場館目前運作正常。</div>';let ml=$('v17MemberList');if(ml)ml.innerHTML=v17Members.map(m=>'<div class="v17Person"><div class="v17Avatar">'+(m.vip?'💎':'🧍')+'</div><div><b>'+m.name+'｜'+m.goal+'</b><small>'+m.state+(m.wait?'｜等待 '+m.wait:'')+'</small><div class="v17MoodBar"><div class="v17MoodFill" style="width:'+Math.max(0,m.mood)+'%"></div></div></div><span class="v17State">'+m.mood+'%</span></div>').join('');let sl=$('v17StaffList');if(sl)sl.innerHTML=v17StaffAgents.map(s=>'<div class="v17Person"><div class="v17Avatar">'+(s.role==='櫃檯'?'🧑‍💼':s.role==='教練'?'🏋️':s.role==='清潔'?'🧹':'🔧')+'</div><div><b>'+s.name+'｜'+s.role+'</b><small>'+s.state+'</small></div><span class="v17State">工作中</span></div>').join('');if($('v17Reviews'))$('v17Reviews').textContent=v17Stats.reviews;if($('v17Referrals'))$('v17Referrals').textContent=v17Stats.referrals;if($('v17VipUps'))$('v17VipUps').textContent=v17Stats.vipUps;if($('v17Walkouts'))$('v17Walkouts').textContent=v17Stats.walkouts}
+function v17LifeStep(){v17InitAgents();v17Tick++;v17Members.forEach(v17StepMember);v17StaffAgents.forEach(v17StepStaff);if(v17Tick%5===0){let q=v17Members.filter(x=>x.state==='排隊').length;if(q>=3)v17PushFeed('⌛ 尖峰排隊：目前有 '+q+' 位會員等待器材','warn')}v17RenderNpcs();renderV17Life()}
+setInterval(v17LifeStep,2200);
+let v16Selection=null,v16Rotation=0,v16Pos={x:50,y:50},v16Demolish=false;
+if(!g.v16Build)g.v16Build={};
+
+const v16StructureCatalog=[
+ ['wall','牆壁','🧱',180,'structure','切分空間與動線',0,0,8],
+ ['door','門','🚪',260,'structure','讓會員通過分區',0,1,5],
+ ['counter','接待櫃檯','🛎️',850,'structure','提升報到效率',1,2,15]
+];
+const v16RoomCatalog=[
+ ['locker','更衣室','👕',1800,'room','提高會員滿意度',0,7,55],
+ ['showerRoom','淋浴間','🚿',2200,'room','運動後恢復更好',0,9,70],
+ ['toilet','廁所','🚻',1200,'room','基礎服務設施',0,5,35],
+ ['loungeRoom','休息室','🛋️',1600,'room','提升停留時間',1,6,45]
+];
+const v16DecorCatalog=[
+ ['plant','植物','🪴',220,'decor','增加舒適感',1,1,2],
+ ['mirror','鏡牆','🪞',420,'decor','提升訓練區質感',2,1,3],
+ ['light','氛圍燈','💡',500,'decor','提升評價',2,2,4],
+ ['poster','健身海報','🖼️',280,'decor','增加場館魅力',1,1,2]
+];
+
+function allV16Catalog(){return [...v16StructureCatalog,...v16RoomCatalog,...v16DecorCatalog]}
+function showV16Tab(name){
+ ['structure','room','decor','manage'].forEach(n=>{
+  let p=$('v16'+n[0].toUpperCase()+n.slice(1));if(p)p.classList.toggle('active',n===name);
+  let b=$('v16Tab'+n[0].toUpperCase()+n.slice(1)+'Btn');if(b)b.classList.toggle('active',n===name);
+ });
+ renderV16();
+}
+function renderV16(){
+ const renderList=(id,arr)=>{
+   let el=$(id);if(!el)return;
+   el.innerHTML=arr.map(i=>`<div class="v16Item"><div class="icon">${i[2]}</div><b>${i[1]}</b><small>${i[5]}</small><div class="cost">$${i[3]}</div><button onclick="selectV16('${i[0]}')">選擇</button></div>`).join('');
+ };
+ renderList('v16StructureList',v16StructureCatalog);
+ renderList('v16RoomList',v16RoomCatalog);
+ renderList('v16DecorList',v16DecorCatalog);
+ renderV16Canvas();
+ let vals=Object.values(g.v16Build||{}),bonus=0,happy=0,maint=0;
+ vals.forEach(o=>{let it=allV16Catalog().find(x=>x[0]===o.type);if(it){bonus+=it[6]||0;happy+=it[7]||0;maint+=it[8]||0}});
+ if($('v16BuiltCount'))$('v16BuiltCount').textContent=vals.length;
+ if($('v16DecorBonus'))$('v16DecorBonus').textContent='+'+bonus;
+ if($('v16HappyBonus'))$('v16HappyBonus').textContent='+'+happy;
+ if($('v16Maintenance'))$('v16Maintenance').textContent='$'+maint;
+ updateV16Ghost();
+}
+function selectV16(id){
+ let it=allV16Catalog().find(x=>x[0]===id);if(!it)return;
+ v16Selection=id;v16Rotation=0;v16Pos={x:50,y:50};updateV16Ghost();toastMsg(`已選擇 ${it[1]}`);
+}
+function rotateV16(){v16Rotation=(v16Rotation+90)%360;updateV16Ghost()}
+function cancelV16(){v16Selection=null;updateV16Ghost()}
+function v16Collision(x,y){
+ return Object.values(g.v16Build||{}).some(o=>Math.abs(o.x-x)<6&&Math.abs(o.y-y)<7)
+ || Object.values(g.layout||{}).some(p=>p&&Math.abs((p.x||0)-x)<6&&Math.abs((p.y||0)-y)<7);
+}
+function updateV16Ghost(){
+ let ghost=$('v16Ghost'),label=$('v16Selected');if(!ghost)return;
+ if(!v16Selection){ghost.className='v16Ghost';if(label)label.textContent='尚未選擇建築物件';return;}
+ let it=allV16Catalog().find(x=>x[0]===v16Selection);if(!it)return;
+ let bad=v16Pos.x<4||v16Pos.x>96||v16Pos.y<5||v16Pos.y>95||v16Collision(v16Pos.x,v16Pos.y);
+ ghost.className='v16Ghost active'+(bad?' invalid':'');
+ ghost.style.left=v16Pos.x+'%';ghost.style.top=v16Pos.y+'%';ghost.style.transform=`translate(-50%,-50%) rotate(${v16Rotation}deg)`;
+ ghost.textContent=it[2];
+ if(label)label.textContent=`${it[2]} ${it[1]}｜${v16Rotation}°｜格子 ${Math.round(v16Pos.x/5)},${Math.round(v16Pos.y/5)}`;
+}
+function confirmV16Placement(){
+ if(!v16Selection)return toastMsg('請先選擇建築物件');
+ let ghost=$('v16Ghost');if(ghost?.classList.contains('invalid'))return toastMsg('❌ 此位置無法建造');
+ let it=allV16Catalog().find(x=>x[0]===v16Selection);if(!it)return;
+ if(g.money<it[3])return toastMsg('資金不足');
+ g.money-=it[3];
+ let key='v16_'+Date.now();
+ g.v16Build[key]={type:v16Selection,x:v16Pos.x,y:v16Pos.y,rotation:v16Rotation};
+ save();render();renderV16();renderScene();toastMsg(`🏗️ ${it[1]} 建造完成`);
+}
+function toggleDemolishMode(){
+ v16Demolish=!v16Demolish;
+ let b=$('demolishBtn');if(b)b.textContent=`拆除模式：${v16Demolish?'開啟':'關閉'}`;
+ renderV16Canvas();
+}
+function demolishV16(key){
+ if(!v16Demolish)return;
+ let o=g.v16Build?.[key];if(!o)return;let it=allV16Catalog().find(x=>x[0]===o.type);if(!it)return;
+ let refund=Math.round(it[3]*0.5);g.money+=refund;delete g.v16Build[key];save();render();renderV16();renderScene();toastMsg(`🗑️ 已拆除，返還 $${refund}`);
+}
+function renderV16Canvas(){
+ let c=$('v16Canvas');if(!c)return;
+ c.querySelectorAll('.v16Placed').forEach(n=>n.remove());
+ Object.entries(g.v16Build||{}).forEach(([key,o])=>{
+  let it=allV16Catalog().find(x=>x[0]===o.type);if(!it)return;
+  let d=document.createElement('div');
+  d.className=`v16Placed ${it[4]}${v16Demolish?' demolish':''}`;
+  d.style.left=o.x+'%';d.style.top=o.y+'%';d.style.transform=`translate(-50%,-50%) rotate(${o.rotation||0}deg)`;
+  d.innerHTML=`${it[2]}<small></small>`;d.onclick=()=>demolishV16(key);c.appendChild(d);
+ });
+}
+setTimeout(()=>{
+ let c=$('v16Canvas');if(!c)return;
+ const move=e=>{
+   if(!v16Selection)return;let r=c.getBoundingClientRect();
+   let x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;
+   v16Pos={x:Math.max(5,Math.min(95,Math.round(x/5)*5)),y:Math.max(5,Math.min(95,Math.round(y/5)*5))};
+   updateV16Ghost();
+ };
+ c.addEventListener('pointerdown',move);
+ c.addEventListener('pointermove',e=>{if(e.buttons||e.pressure>0)move(e)});
+},600);
+
+let v15Warehouse = JSON.parse(localStorage.getItem('gym_v15_warehouse')||'{}');
+let buildSelection=null, buildRotation=0, buildPos={x:50,y:50}, selectedExistingKey=null;
+
+const v15Catalog = [
+ ['treadmill','跑步機','🏃',1200,'有氧區','提高有氧會員滿意度'],
+ ['bike','飛輪車','🚴',950,'有氧區','適合尖峰分流'],
+ ['bench','臥推椅','🏋️',1500,'自由重量','力量會員熱門器材'],
+ ['dumbbell','啞鈴架','💪',1100,'自由重量','高使用率器材'],
+ ['cable','滑輪機','⚙️',1800,'機械區','多功能訓練'],
+ ['legpress','腿推機','🦵',2100,'機械區','高階腿部設備'],
+ ['rower','划船機','🚣',1350,'有氧區','提升有氧選擇'],
+ ['stretch','伸展架','🧘',700,'團課區','提升恢復與滿意度']
+];
+
+function showBuilderTab(name){
+ ['shop','warehouse','place'].forEach(n=>{
+  let pane=$('builder'+n[0].toUpperCase()+n.slice(1));if(pane)pane.classList.toggle('active',n===name);
+  let btn=$('builder'+n[0].toUpperCase()+n.slice(1)+'Btn');if(btn)btn.classList.toggle('active',n===name);
+ });
+ renderV15Builder();
+}
+function renderV15Builder(){
+ let shop=$('v15ShopList'),wh=$('warehouseList');
+ if(shop) shop.innerHTML=v15Catalog.map(i=>`<div class="shopItem"><div class="icon">${i[2]}</div><b>${i[1]}</b><small>${i[4]}｜${i[5]}</small><div class="shopPrice">$${i[3]}</div><button onclick="buyToWarehouse('${i[0]}')">購買</button></div>`).join('');
+ if(wh){
+   let items=v15Catalog.filter(i=>(v15Warehouse[i[0]]||0)>0);
+   wh.innerHTML=items.length?items.map(i=>`<div class="warehouseItem"><div class="icon">${i[2]}</div><b>${i[1]}</b><small>${i[4]}</small><span class="stockBadge">庫存 × ${v15Warehouse[i[0]]}</span><button onclick="selectBuildItem('${i[0]}')">選擇放置</button></div>`).join(''):'<div class="builderHint">倉庫目前是空的，先到器材商店購買。</div>';
+ }
+ updateBuildGhost();
+}
+function buyToWarehouse(id){
+ let it=v15Catalog.find(x=>x[0]===id);if(!it)return;
+ if(g.money<it[3])return toastMsg('資金不足');
+ g.money-=it[3];v15Warehouse[id]=(v15Warehouse[id]||0)+1;
+ localStorage.setItem('gym_v15_warehouse',JSON.stringify(v15Warehouse));save();render();renderV15Builder();toastMsg(`📦 ${it[1]} 已送進倉庫`);
+}
+function selectBuildItem(id){
+ let it=v15Catalog.find(x=>x[0]===id);if(!it||!(v15Warehouse[id]>0))return;
+ buildSelection=id;buildRotation=0;buildPos={x:50,y:50};selectedExistingKey=null;
+ showBuilderTab('place');updateBuildGhost();toastMsg('拖曳場地選擇位置');
+}
+function rotateBuildItem(){
+ buildRotation=(buildRotation+90)%360;updateBuildGhost();
+}
+function cancelBuildItem(){buildSelection=null;selectedExistingKey=null;updateBuildGhost()}
+function buildOccupied(x,y,ignoreKey=null){
+ return Object.entries(g.layout||{}).some(([k,p])=>k!==ignoreKey&&Math.abs((p?.x||0)-x)<7&&Math.abs((p?.y||0)-y)<8);
+}
+function updateBuildGhost(){
+ let ghost=$('buildGhost'),label=$('selectedBuildItem');if(!ghost)return;
+ if(!buildSelection){ghost.className='buildGhost';if(label)label.textContent='尚未選擇器材';return;}
+ let it=v15Catalog.find(x=>x[0]===buildSelection);if(!it)return;
+ let bad=buildPos.x<5||buildPos.x>95||buildPos.y<8||buildPos.y>92||buildOccupied(buildPos.x,buildPos.y,selectedExistingKey);
+ ghost.className='buildGhost active'+(bad?' invalid':'')+(buildRotation?` rotation${buildRotation}`:'');
+ ghost.style.left=buildPos.x+'%';ghost.style.top=buildPos.y+'%';ghost.innerHTML=`${it[2]}<small>${it[1]}｜${Math.round(buildPos.x/5)},${Math.round(buildPos.y/5)}</small>`;
+ if(label)label.textContent=`${it[2]} ${it[1]}｜${buildRotation}°｜格子 ${Math.round(buildPos.x/5)},${Math.round(buildPos.y/5)}`;
+}
+function confirmBuildPlacement(){
+ if(!buildSelection)return toastMsg('請先從倉庫選擇器材');
+ let ghost=$('buildGhost');if(ghost?.classList.contains('invalid'))return toastMsg('❌ 此位置不能放置');
+ let it=v15Catalog.find(x=>x[0]===buildSelection);if(!it)return;
+ if(selectedExistingKey){
+   g.layout[selectedExistingKey]={x:buildPos.x,y:buildPos.y,rotation:buildRotation};
+   toastMsg('✓ 器材已移動');
+ }else{
+   if(!(v15Warehouse[buildSelection]>0))return toastMsg('倉庫沒有這台器材');
+   v15Warehouse[buildSelection]--;
+   let key='v15_'+buildSelection+'_'+Date.now();
+   g.layout[key]={x:buildPos.x,y:buildPos.y,rotation:buildRotation,type:buildSelection};
+   if(!g.v15Placed)g.v15Placed={};g.v15Placed[key]=buildSelection;
+   localStorage.setItem('gym_v15_warehouse',JSON.stringify(v15Warehouse));
+   toastMsg(`✓ ${it[1]} 已放置`);
+ }
+ save();renderScene();renderV15Builder();buildSelection=null;selectedExistingKey=null;updateBuildGhost();
+}
+function moveExistingEquipment(){
+ let entries=Object.entries(g.v15Placed||{});
+ if(!entries.length)return toastMsg('目前沒有 V15 放置的器材');
+ let [key,id]=entries[0];selectedExistingKey=key;buildSelection=id;
+ let p=(g.layout||{})[key]||{x:50,y:50};buildPos={x:p.x,y:p.y};buildRotation=p.rotation||0;updateBuildGhost();toastMsg('已選取一台器材，可拖曳移動');
+}
+function sellSelectedEquipment(){
+ if(!selectedExistingKey)return toastMsg('先按「移動既有器材」選取器材');
+ let id=(g.v15Placed||{})[selectedExistingKey],it=v15Catalog.find(x=>x[0]===id);if(!it)return;
+ let refund=Math.round(it[3]*0.6);g.money+=refund;delete g.v15Placed[selectedExistingKey];delete g.layout[selectedExistingKey];
+ selectedExistingKey=null;buildSelection=null;save();render();renderScene();renderV15Builder();toastMsg(`💰 已出售，回收 $${refund}`);
+}
+setTimeout(()=>{
+ let canvas=$('buildCanvas');if(!canvas)return;
+ canvas.addEventListener('pointerdown',e=>{
+   if(!buildSelection)return;
+   let r=canvas.getBoundingClientRect();
+   let x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;
+   buildPos={x:Math.max(5,Math.min(95,Math.round(x/5)*5)),y:Math.max(8,Math.min(92,Math.round(y/5)*5))};
+   updateBuildGhost();
+ });
+ canvas.addEventListener('pointermove',e=>{
+   if(!buildSelection||!(e.buttons||e.pressure>0))return;
+   let r=canvas.getBoundingClientRect();
+   let x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;
+   buildPos={x:Math.max(5,Math.min(95,Math.round(x/5)*5)),y:Math.max(8,Math.min(92,Math.round(y/5)*5))};
+   updateBuildGhost();
+ });
+},500);
+
+let gameSpeed=1,simTick=6,simTodayIncome=0,brokenKeys=new Set();
+let opsVisitors=0,opsPeakQueue=0,opsRepairs=0;
+
 function setGameSpeed(v){gameSpeed=v;toastMsg(v?`遊戲速度 ${v}×`:'遊戲暫停')}
-function phaseNow(){let h=(simTick%24);return h<7?'🌙 清晨':h<12?'🌅 早晨':h<17?'☀️ 下午':h<22?'🌆 晚間尖峰':'🌙 夜間'}
+function gymHour(){return simTick%24}
+function isOpen(){let h=gymHour();return h>=6&&h<24}
+function acceptsEntry(){let h=gymHour();return h>=6&&h<22.5}
+function phaseNow(){let h=gymHour();return h<6?'🔒 打烊':h<9?'🌅 開店時段':h<17?'☀️ 日間':h<22.5?'🌆 晚間尖峰':'🚪 最後離場'}
+function opsTaskNow(){let h=gymHour();return h<6?'🧹 清潔／維修':h<9?'🧾 開店檢查':h<17?'🏋️ 正常營業':h<22.5?'🔥 尖峰應對':h<24?'🚪 只出不進':'🌙 打烊結算'}
 function popCash(scene,x,y,amt){let p=document.createElement('div');p.className='cashPop';p.style.left=x;p.style.top=y;p.textContent=`+$${amt}`;scene.appendChild(p);setTimeout(()=>p.remove(),1000)}
 function simulatorStep(){
  if(!gameSpeed||layoutEdit)return;simTick+=gameSpeed;
  let scene=$('gymScene');if(!scene)return;
+ let status=$('openStatus');if(status){status.textContent=isOpen()?(acceptsEntry()?'🟢 營業中 06:00–24:00':'🟠 最後離場中｜停止入場'):'🔴 已打烊 00:00–06:00';status.classList.toggle('closed',!isOpen())}
+ let gym=$('gymScene');if(gym)gym.classList.toggle('closedGym',!isOpen());
+ let task=$('opsTask');if(task)task.textContent=opsTaskNow();
+ document.querySelectorAll('.opsTimeline div').forEach(el=>{let h=Number(el.dataset.hour);let now=gymHour();el.classList.toggle('active',(h===24&&now>=22.5)||(h!==24&&now>=h&&now<h+3))});
+ if(!isOpen()){scene.querySelectorAll('.pixelNpc').forEach(n=>n.remove());if($('simPeople'))$('simPeople').textContent='0';if($('simQueue'))$('simQueue').textContent='0';if($('dayPhase'))$('dayPhase').textContent='🔒 打烊清潔／維修';return;}
  let npcs=[...scene.querySelectorAll('.pixelNpc')],equips=[...scene.querySelectorAll('.equip')];
+ if(!acceptsEntry()&&npcs.length){npcs.slice(Math.ceil(npcs.length/2)).forEach(n=>n.remove());npcs=[...scene.querySelectorAll('.pixelNpc')];}
+ opsVisitors+=acceptsEntry()?Math.max(0,Math.round(npcs.length*.08*gameSpeed)):0;
  let peak=(simTick%24>=17&&simTick%24<22)?2:1;
  npcs.forEach((n,i)=>{
   let e=equips.length?equips[(i+simTick)%equips.length]:null;
@@ -74,10 +333,16 @@ function simulatorStep(){
   }
  });
  if(equips.length&&Math.random()<.018*gameSpeed){let e=equips[Math.floor(Math.random()*equips.length)];brokenKeys.add(e.dataset.key);e.classList.add('brokenEquip')}
- if(roleCount('repair')&&brokenKeys.size&&Math.random()<.12*gameSpeed){let k=[...brokenKeys][0];brokenKeys.delete(k);let e=scene.querySelector(`[data-key="${k}"]`);if(e)e.classList.remove('brokenEquip')}
- let q=Math.max(0,npcs.length-equips.filter(e=>!brokenKeys.has(e.dataset.key)).length);
- if($('simPeople'))$('simPeople').textContent=npcs.length;if($('simQueue'))$('simQueue').textContent=q;if($('simBroken'))$('simBroken').textContent=brokenKeys.size;if($('simIncome'))$('simIncome').textContent=fmt(simTodayIncome);if($('dayPhase'))$('dayPhase').textContent=phaseNow();
- if(simTick%24===0)simTodayIncome=0;
+ if(roleCount('repair')&&brokenKeys.size&&Math.random()<.12*gameSpeed){let k=[...brokenKeys][0];brokenKeys.delete(k);let e=scene.querySelector(`[data-key="${k}"]`);if(e)e.classList.remove('brokenEquip');opsRepairs++}
+ let q=Math.max(0,npcs.length-equips.filter(e=>!brokenKeys.has(e.dataset.key)).length);opsPeakQueue=Math.max(opsPeakQueue,q);
+ if($('opsVisitors'))$('opsVisitors').textContent=opsVisitors;if($('opsPeakQueue'))$('opsPeakQueue').textContent=opsPeakQueue;if($('opsRepairs'))$('opsRepairs').textContent=opsRepairs;if($('opsRevenue'))$('opsRevenue').textContent=fmt(simTodayIncome);if($('simPeople'))$('simPeople').textContent=npcs.length;if($('simQueue'))$('simQueue').textContent=q;if($('simBroken'))$('simBroken').textContent=brokenKeys.size;if($('simIncome'))$('simIncome').textContent=fmt(simTodayIncome);if($('dayPhase'))$('dayPhase').textContent=phaseNow();
+ if(simTick%24===0){
+ let maintenance=0,decorBonus=0,happyBonus=0;
+ Object.values(g.v16Build||{}).forEach(o=>{let it=allV16Catalog().find(x=>x[0]===o.type);if(it){maintenance+=it[8]||0;decorBonus+=it[6]||0;happyBonus+=it[7]||0}});
+ g.money=Math.max(0,g.money-maintenance);
+ g.rating=Math.min(5,(g.rating||3)+(decorBonus*0.002));
+ simTodayIncome=0;opsVisitors=0;opsPeakQueue=0;opsRepairs=0;
+}
  save();
 }
 setInterval(simulatorStep,1300);
@@ -104,7 +369,22 @@ if(!conflict){d.style.left=x+'%';d.style.top=y+'%';g.layout[key]={x,y};}
   d.addEventListener('pointerup',finish);d.addEventListener('pointercancel',finish);scene.appendChild(d);
  });
  let spots={shower:[6,18],vending:[7,36],lounge:[7,54],ptzone:[7,70]};
- facilities.forEach(f=>{if(!g.facilities?.[f[0]])return;let s=document.createElement('div');s.className='facilitySpot';s.style.left=spots[f[0]][0]+'%';s.style.top=spots[f[0]][1]+'%';s.innerHTML=`${f[2]}<small>${f[1]}</small>`;scene.appendChild(s)});
+ 
+ 
+ Object.entries(g.v16Build||{}).forEach(([key,o])=>{
+   let it=allV16Catalog().find(x=>x[0]===o.type);if(!it)return;
+   let d=document.createElement('div');d.className=`v16Placed ${it[4]}`;
+   d.style.left=o.x+'%';d.style.top=o.y+'%';d.style.transform=`translate(-50%,-50%) rotate(${o.rotation||0}deg)`;
+   d.innerHTML=it[2];scene.appendChild(d);
+ });
+Object.entries(g.v15Placed||{}).forEach(([key,id])=>{
+   let it=v15Catalog.find(x=>x[0]===id),p=(g.layout||{})[key];if(!it||!p)return;
+   let d=document.createElement('div');d.className='equip';d.dataset.key=key;
+   d.style.left=p.x+'%';d.style.top=p.y+'%';d.style.transform=`rotate(${p.rotation||0}deg)`;
+   d.innerHTML=`${it[2]}<small>${it[1]}</small>`;
+   scene.appendChild(d);
+ });
+facilities.forEach(f=>{if(!g.facilities?.[f[0]])return;let s=document.createElement('div');s.className='facilitySpot';s.style.left=spots[f[0]][0]+'%';s.style.top=spots[f[0]][1]+'%';s.innerHTML=`${f[2]}<small>${f[1]}</small>`;scene.appendChild(s)});
  if(!layoutEdit){
   let people=Math.min(6,Math.max(2,Math.round(g.members/12)));
   for(let i=0;i<people;i++){let n=document.createElement('div');n.className='pixelNpc memberNpc';n.style.left=(20+(i*13)%65)+'%';n.style.top=(20+(i*17)%55)+'%';n.innerHTML=`${i%2?'🧑':'👩'}<small>會員</small>`;scene.appendChild(n)}
@@ -210,7 +490,7 @@ render();
 if('serviceWorker' in navigator){
  window.addEventListener('load',async()=>{
   try{
-   const reg=await navigator.serviceWorker.register('./sw.js?v=130',{updateViaCache:'none'});
+   const reg=await navigator.serviceWorker.register('./sw.js?v=170',{updateViaCache:'none'});
    await reg.update();
    let refreshing=false;
    navigator.serviceWorker.addEventListener('controllerchange',()=>{

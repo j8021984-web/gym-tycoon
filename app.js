@@ -1,5 +1,15 @@
-const KEY='gym_tycoon_v17';
-const PREVKEY='gym_tycoon_v16';
+
+const v18Menus={
+ operate:{title:'📊 營運管理',items:[['operations','🕒','營運中心','營業時間、尖峰與每日數據'],['mission','📋','任務','查看目標與領取獎勵'],['upgrade','🚀','擴建／分店','升級場館與連鎖經營'],['memberlife','⭐','會員人生','常客、評論與會員成長']]},
+ people:{title:'👥 人員管理',items:[['life2','👥','即時人物','會員與員工 AI 動態'],['staff','🧑‍🏫','員工管理','招募、排班、培訓與升遷'],['memberlife','👤','會員資料','會員滿意與成長紀錄']]},
+ build:{title:'🧱 建造管理',items:[['builder','🏋️','器材商店','購買、倉庫與器材放置'],['interior','🏗️','裝潢建築','牆壁、房間與裝飾'],['layout','🔨','配置中心','快速調整器材位置'],['build','🏢','健身帝國','區域與場館風格'],['equipment','⚙️','器材升級','查看既有設備與升級']]},
+ more:{title:'☰ 更多功能',items:[['home','🏠','回到場館','主健身房即時畫面'],['mission','🎯','任務','經營挑戰與獎勵'],['upgrade','🏆','發展','擴建與聯盟'],['operations','📊','統計','營運數據與時間']]}
+};
+function openV18Menu(type){let m=v18Menus[type];if(!m)return;$('v18SheetTitle').textContent=m.title;$('v18MenuGrid').innerHTML=m.items.map(i=>`<button class="v18MenuItem" onclick="v18Go('${i[0]}')"><span>${i[1]}</span><b>${i[2]}</b><small>${i[3]}</small></button>`).join('');$('v18Shade').classList.add('open');$('v18Sheet').classList.add('open')}
+function closeV18Menu(){$('v18Shade')?.classList.remove('open');$('v18Sheet')?.classList.remove('open')}
+function v18Go(id,btn){closeV18Menu();tab(id);document.querySelectorAll('.v18Nav button').forEach(x=>x.classList.remove('active'));if(id==='home')document.querySelector('.v18Nav button')?.classList.add('active');if(btn)btn.classList.add('active');if(id==='builder'&&typeof renderV15Builder==='function')renderV15Builder();if(id==='interior'&&typeof renderV16==='function')renderV16();if(id==='life2'&&typeof renderV17Life==='function')renderV17Life();window.scrollTo({top:0,behavior:'smooth'})}
+const KEY='gym_tycoon_v18';
+const PREVKEY='gym_tycoon_v17';
 const OLDKEY='gym_tycoon_v1';
 const machines=[
  ['treadmill','跑步機','🏃',1200,3,'cardio'],['bench','臥推架','🏋️',1800,5,'strength'],['squat','深蹲架','🦵',2400,7,'strength'],['bike','飛輪車','🚴',3200,9,'cardio'],['cable','滑輪機','💪',4500,12,'strength'],['sauna','三溫暖','🧖',8000,20,'cardio']
@@ -490,7 +500,7 @@ render();
 if('serviceWorker' in navigator){
  window.addEventListener('load',async()=>{
   try{
-   const reg=await navigator.serviceWorker.register('./sw.js?v=170',{updateViaCache:'none'});
+   const reg=await navigator.serviceWorker.register('./sw.js?v=180',{updateViaCache:'none'});
    await reg.update();
    let refreshing=false;
    navigator.serviceWorker.addEventListener('controllerchange',()=>{
